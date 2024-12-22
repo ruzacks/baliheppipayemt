@@ -3,6 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token() }}">
+
   <title>Payment App</title>
   <!-- Google Fonts: Roboto -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
@@ -21,6 +23,9 @@
       font-weight: 400; /* Normal weight for body text */
     }
   </style>
+
+
+
 </head>
 <body class="text-gray-800">
 
@@ -33,6 +38,9 @@
     @yield('main')
   </div>
 
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/inputmask/5.0.7/inputmask.min.js"></script>
   <script>
     function toggleMenuWithAnimation(submenuId) {
       const submenu = document.getElementById(submenuId);

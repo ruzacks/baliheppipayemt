@@ -10,7 +10,7 @@
 <!-- Favicons
     ================================================== -->
 <!-- Favicon -->
-<link rel="shortcut icon" href="{{ asset('public/img/fav.png') }}" type="image/png">
+<link rel="shortcut icon" href="{{ asset('public/img/favicon.ico') }}" type="image/png">
 
 <!-- Bootstrap -->
 <link rel="stylesheet" href="{{ asset('public/css/bootstrap.css') }}">
@@ -23,6 +23,7 @@
 
 <!-- Google Fonts -->
 <link href="https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,600,300" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 
 <!-- Modernizr -->
 <script src="{{ asset('public/js/modernizr.custom.js') }}" type="text/javascript"></script>
@@ -148,6 +149,17 @@
     <div class="fnav">
       <p>Jl. Pulau Batam No.32, pesiapan, Kec. Tabanan, Kabupaten Tabanan, Bali 82114. Telp: 0858-5710-8560. 13.00 - 03.00</p>
       <p>Copyright &copy; 2024 Bali Heppi.</p>
+      <p>
+        <a href="https://www.instagram.com/newbaliheppikaraoke/?hl=en" target="_blank" style="text-decoration: none;">
+          <i class="fab fa-instagram" style="color: #ebebeb; margin-right: 5px;"></i>
+        </a>
+        <a href="https://chat.whatsapp.com/Giv9opLhrWRIVBRJPfksVy" target="_blank" style="text-decoration: none; margin-right: 10px; margin-left: 10px;">
+          <i class="fab fa-whatsapp" style="color: #fefefe; margin-right: 5px;"></i>
+        </a>
+        <a href="https://www.facebook.com/profile.php?id=61561441652696" target="_blank" style="text-decoration: none;">
+          <i class="fab fa-facebook" style="color: #ffffff; margin-right: 5px;"></i>
+        </a>
+      </p>    
     </div>
   </div>
 </div>
@@ -161,10 +173,6 @@
 <script src="{{ asset('public/js/contact_me.js') }}"></script>
 <script src="{{ asset('public/js/main.js') }}"></script>
 
-<script id="midtrans-script" type="text/javascript"
-src="https://api.midtrans.com/v2/assets/js/midtrans-new-3ds.min.js"
-data-environment="sandbox"
-data-client-key="SB-Mid-client-y44CMrM32XNm4ZA0"></script>
 {{-- @section('scripts') --}}
   <script>
 
@@ -177,47 +185,6 @@ data-client-key="SB-Mid-client-y44CMrM32XNm4ZA0"></script>
           }
       });
       
-    function toggleCardDetails(show) {
-      const cardDetails = document.getElementById('card-details');
-      if (show) {
-        cardDetails.classList.remove('hidden');
-      } else {
-        cardDetails.classList.add('hidden');
-      }
-    }
-
-    // card data from customer input, for example
-    var cardData = {
-      "card_number": 4811111111111114,
-      "card_exp_month": 02,
-      "card_exp_year": 2025,
-      // "card_cvv": 123,
-      "OTP/3DS": 112233,
-      "bank_one_time_token": "12345678"
-    };
-
-    // callback functions
-    var options = {
-      onSuccess: function(response){
-        // Success to get card token_id, implement as you wish here
-        console.log('Success to get card token_id, response:', response);
-        var token_id = response.token_id;
-
-        console.log('This is the card token_id:', token_id);
-        // Implement sending the token_id to backend to proceed to next step
-      },
-      onFailure: function(response){
-        // Fail to get card token_id, implement as you wish here
-        console.log('Fail to get card token_id, response:', response);
-
-        // you may want to implement displaying failure message to customer.
-        // Also record the error message to your log, so you can review
-        // what causing failure on this transaction.
-      }
-    };
-
-    // trigger `getCardToken` function
-    MidtransNew3ds.getCardToken(cardData, options);
   </script>
 
 </body>
