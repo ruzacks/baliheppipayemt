@@ -55,6 +55,7 @@
         <li><a href="{{ url('/') }}#page-top" class="page-scroll">Home</a></li>
         <li><a href="{{ url('/') }}#about" class="page-scroll">About</a></li>
         <li><a href="{{ url('/') }}#portfolio" class="page-scroll">Gallery</a></li>
+        <li><a href="{{ url('/') }}#find-us" class="page-scroll">Contact</a></li>
         <li><a href="{{ url('mybill') }}" class="page-scroll">Payment</a></li>
       </ul>
     </div>
@@ -77,19 +78,7 @@
 <div id="footer">
   <div class="container text-center">
     <div class="fnav">
-      <p>Jl. Pulau Batam No.32, pesiapan, Kec. Tabanan, Kabupaten Tabanan, Bali 82114. Telp: 0858-5710-8560. 13.00 - 03.00</p>
       <p>Copyright &copy; 2024 Bali Heppi.</p>
-      <p>
-        <a href="https://www.instagram.com/newbaliheppikaraoke/?hl=en" target="_blank" style="text-decoration: none;">
-          <i class="fab fa-instagram" style="color: #ebebeb; margin-right: 5px;"></i>
-        </a>
-        <a href="https://chat.whatsapp.com/Giv9opLhrWRIVBRJPfksVy" target="_blank" style="text-decoration: none; margin-right: 10px; margin-left: 10px;">
-          <i class="fab fa-whatsapp" style="color: #fefefe; margin-right: 5px;"></i>
-        </a>
-        <a href="https://www.facebook.com/profile.php?id=61561441652696" target="_blank" style="text-decoration: none;">
-          <i class="fab fa-facebook" style="color: #ffffff; margin-right: 5px;"></i>
-        </a>
-      </p>    
     </div>
   </div>
 </div>

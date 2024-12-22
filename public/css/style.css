@@ -212,6 +212,26 @@ filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#645AE0', end
 	margin-bottom: 30px;
 	line-height: 21px;
 }
+/* find-us Section */
+#find-us {
+	padding: 120px 0;
+	/* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#645AE0+0,645AE0+0,645AE0+0,7fdce6+0,645AE0+100 */
+	background: rgb(100,90,224); /* Old browsers */
+	background: -moz-linear-gradient(top, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 100%); /* FF3.6-15 */
+	background: -webkit-linear-gradient(top, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 100%); /* Chrome10-25,Safari5.1-6 */
+	background: linear-gradient(to bottom, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 0%, rgba(100,90,224,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#645AE0', endColorstr='#645AE0', GradientType=0 ); /* IE6-9 */
+}
+#find-us .find-us-text {
+	margin-left: 10px;
+}
+#find-us img {
+	float: right;
+}
+#find-us p {
+	margin-bottom: 30px;
+	line-height: 21px;
+}
 /* Portfolio Section */
 #portfolio {
 	padding: 120px 0;
