@@ -22,7 +22,7 @@
                 <!-- Amount -->
                 <div id="amount-container">
                     <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
-                    <input type="text" id="amount"
+                    <input type="text" id="amount" autocomplete="off"
                         class="mt-2 block w-full border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm p-3"
                         placeholder="">
                     <p class="text-red-500 text-sm hidden" id="amount-error">Please fill in the amount.</p>
