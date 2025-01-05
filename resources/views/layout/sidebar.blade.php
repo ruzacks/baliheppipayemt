@@ -6,14 +6,14 @@
       <nav class="p-4">
         <ul class="space-y-3">
           <li>
-            <a href="/" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+            <a href="{{ route('admin-panel') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
               <!-- <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21v-7m4 0h8m0 0l-4-4m4 4l-4 4" />
               </svg> -->
               Dashboard
             </a>
           </li>
-          <li>
+          {{-- <li>
             <!-- Parent Menu Item -->
             <button 
               class="flex items-center justify-between w-full text-gray-600 hover:bg-gray-100 p-3 rounded-lg" 
@@ -45,9 +45,9 @@
           
           <li>
             <a href="#" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
-              {{-- <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <!-- <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-3-3.87M4 10v11m16 0v-6a8 8 0 00-8-8V3m0 5V3m0 5a8 8 0 00-8 8v3" />
-              </svg> --}}
+              </svg> -->
               Payment
             </a>
           </li>
@@ -66,7 +66,7 @@
               </svg>
               Settings
             </a>
-          </li>
+          </li> --}}
         </ul>
       </nav>
     </aside>

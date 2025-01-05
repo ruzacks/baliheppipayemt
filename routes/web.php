@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MidtransController;
 use Illuminate\Support\Facades\Route;
 
@@ -25,6 +26,10 @@ Route::get('/failed', function () {
 });
 
 Route::get('admin-panel', [AdminController::class, 'index'])->name('admin-panel');
+
+Route::get('get-last-inv', [InvoiceController::class, 'getLastNumber'])->name('get-last-inv');
+Route::post('invoices-store', [InvoiceController::class, 'store'])->name('invoices.store');
+
 
 Route::post('/payment-request', [MidtransController::class, 'create'])->name('payment.request');
 
