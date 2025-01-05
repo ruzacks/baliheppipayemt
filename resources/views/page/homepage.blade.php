@@ -171,7 +171,7 @@
           </div>
           <div class="card-body border-top">
             <h5 class="card-title">Contact</h5>
-            <p class="card-text">Email: <a href="mailto:admin@nbh.my.id">admin@nbh.my.id</a></p>
+            <p class="card-text">Email: <a href="mailto:admin@baliheppi.com">admin@baliheppi.com</a></p>
             <p class="card-text">Phone: <a href="tel:+62085857108560">+62 858 5710 8560</a></p>
           </div>
           <div class="card-body border-top">

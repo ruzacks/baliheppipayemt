@@ -1,7 +1,7 @@
 <!-- Sidebar -->
 <aside class="w-64 bg-white shadow-md h-full flex-shrink-0">
       <div class="p-6 border-b" style="background-color: #102c42; color: white;">
-        <h1 class="text-2xl font-bold">OpenAI</h1>
+        <h1 class="text-2xl font-bold">Payment App</h1>
       </div>
       <nav class="p-4">
         <ul class="space-y-3">
@@ -44,7 +44,7 @@
           </li>
           
           <li>
-            <a href="{{ route('payment') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+            <a href="#" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
               {{-- <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M20 21v-2a4 4 0 00-3-3.87M4 10v11m16 0v-6a8 8 0 00-8-8V3m0 5V3m0 5a8 8 0 00-8 8v3" />
               </svg> --}}

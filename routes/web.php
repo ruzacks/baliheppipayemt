@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminController;
 use App\Http\Controllers\MidtransController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,6 +23,8 @@ Route::get('/success', function () {
 Route::get('/failed', function () {
     return view('page.failed');
 });
+
+Route::get('admin-panel', [AdminController::class, 'index'])->name('admin-panel');
 
 Route::post('/payment-request', [MidtransController::class, 'create'])->name('payment.request');
 
