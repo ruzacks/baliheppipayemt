@@ -5,14 +5,17 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IpaymuController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Middleware\DisableCors;
 use Illuminate\Support\Facades\Route;
 
 
 
-Route::post('api/get-invoice-detail',[InvoiceController::class, 'getDetail']);
-Route::post('api/request-qr-payment',[IpaymuController::class, 'initiateQRPayment']);
-Route::get('api/check-payment',[IpaymuController::class, 'checkPayment']);
 
+Route::middleware(DisableCors::class)->group(function () {
+    Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
+    Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
+    Route::get('api/check-payment', [IpaymuController::class, 'checkPayment']);
+});
 
 Route::get('/', function () {
     return view('page.homepage');
