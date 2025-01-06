@@ -1,19 +1,58 @@
 <!-- Sidebar -->
-<aside class="w-64 bg-white shadow-md h-full flex-shrink-0">
+<aside class="w-64 bg-white shadow-md h-full flex-shrink-0 transition-all duration-300 ease-in-out md:block lg:block hidden">
+  <div class="p-6 border-b" style="background-color: #102c42; color: white;">
+      <h1 class="text-2xl font-bold">Payment App</h1>
+  </div>
+  <nav class="p-4">
+      <ul class="space-y-3">
+          <li>
+              <a href="{{ route('admin-panel') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+                  Dashboard
+              </a>
+          </li>
+      </ul>
+  </nav>
+</aside>
+
+<!-- Sidebar Toggle for mobile -->
+<div class="md:hidden flex items-center justify-between p-4 bg-gray-100">
+  <button id="sidebar-toggle" class="text-gray-600">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+  </button>
+</div>
+
+<!-- Sidebar content for mobile view, hidden by default -->
+<aside id="mobile-sidebar" class="fixed inset-0 bg-gray-800 bg-opacity-50 hidden">
+  <div class="w-64 bg-white shadow-md h-full flex-shrink-0">
       <div class="p-6 border-b" style="background-color: #102c42; color: white;">
-        <h1 class="text-2xl font-bold">Payment App</h1>
+          <h1 class="text-2xl font-bold">Payment App</h1>
       </div>
       <nav class="p-4">
-        <ul class="space-y-3">
-          <li>
-            <a href="{{ route('admin-panel') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
-              <!-- <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 mr-3 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3 10h11M9 21v-7m4 0h8m0 0l-4-4m4 4l-4 4" />
-              </svg> -->
-              Dashboard
-            </a>
-          </li>
-          {{-- <li>
+          <ul class="space-y-3">
+              <li>
+                  <a href="{{ route('admin-panel') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+                      Dashboard
+                  </a>
+              </li>
+          </ul>
+      </nav>
+  </div>
+</aside>
+
+<script>
+  // Sidebar toggle for mobile
+  const sidebarToggle = document.getElementById('sidebar-toggle');
+  const mobileSidebar = document.getElementById('mobile-sidebar');
+
+  sidebarToggle.addEventListener('click', () => {
+      mobileSidebar.classList.toggle('hidden');
+  });
+</script>
+
+
+{{-- <li>
             <!-- Parent Menu Item -->
             <button 
               class="flex items-center justify-between w-full text-gray-600 hover:bg-gray-100 p-3 rounded-lg" 
@@ -67,7 +106,3 @@
               Settings
             </a>
           </li> --}}
-        </ul>
-      </nav>
-    </aside>
-

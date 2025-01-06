@@ -46,13 +46,13 @@
       <div class="flex w-full shrink-0 gap-2 md:w-max">
         <div class="w-full md:w-72">
             <div class="flex items-center space-x-2 w-full">
-                <div class="relative w-full">
+                {{-- <div class="relative w-full">
                     <input 
                     placeholder="Search" 
                     type="text" 
-                    class="w-full aria-disabled:cursor-not-allowed outline-none focus:outline-none text-stone-800 dark:text-white placeholder:text-stone-600/60 ring-transparent border border-stone-200 transition-all ease-in disabled:opacity-50 disabled:pointer-events-none select-none text-sm py-2 px-2.5 ring shadow-sm bg-white rounded-lg duration-100 hover:border-stone-300 hover:ring-none focus:border-stone-400 focus:ring-none peer" 
+                    class="w-full aria-disabled:cursor-not-allowed outline-none focus:outline-none text-stone-800 placeholder:text-stone-600/60 ring-transparent border border-stone-200 transition-all ease-in disabled:opacity-50 disabled:pointer-events-none select-none text-sm py-2 px-2.5 ring shadow-sm bg-white rounded-lg duration-100 hover:border-stone-300 hover:ring-none focus:border-stone-400 focus:ring-none peer" 
                     />
-                </div>
+                </div> --}}
                 <button 
                     id="openModalBtn"
                     class="inline-flex items-center justify-center border align-middle select-none font-sans font-medium text-center transition-all ease-in text-sm py-2 px-3 shadow-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 duration-150"
@@ -66,7 +66,7 @@
     </div>
     <div class="w-full overflow-hidden rounded-lg border border-stone-200">
         <table class="w-full text-left">
-            <thead class="border-b border-stone-200 bg-gray-100 text-sm font-medium text-stone-600 dark:bg-surface-dark">
+            <thead class="border-b border-stone-200 bg-gray-100 text-sm font-medium text-stone-600">
                 <tr>
                     <th class="px-2.5 py-2 text-start font-medium">Invoice No</th>
                     <th class="px-2.5 py-2 text-start font-medium">Amount</th>

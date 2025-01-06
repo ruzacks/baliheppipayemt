@@ -34,11 +34,22 @@
 
     @include('layout.sidebar')
 
-    <!-- Navbar -->
     <main class="flex-1">
-    <header class="bg-white shadow p-6">
-      <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
-    </header>
+      
+      <!-- Navbar -->
+      <header class="bg-white shadow p-6 flex justify-between items-center">
+          <h2 class="text-2xl font-bold text-gray-800">Dashboard</h2>
+          
+          <form action="{{ route('logout') }}" method="POST" class="flex items-center space-x-2">
+              @csrf
+              <button type="submit" class="flex items-center text-white bg-red-600 hover:bg-red-700 px-4 py-2 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m4-4H7m7 4V7" />
+                  </svg>
+                  <span class="ml-2">Logout</span>
+              </button>
+          </form>
+      </header>
     
 
     <!-- Main Content -->
