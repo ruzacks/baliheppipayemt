@@ -1,45 +1,7 @@
 @extends('layout.admin-layout')
 
 @section('main')
-
-
-@if(session('success'))
-<div 
-    id="toast-success" 
-    class="fixed top-5 right-5 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded shadow-md" 
-    role="alert"
->
-    <strong class="font-bold">Success!</strong>
-    <span class="block sm:inline">{{ session('success') }}</span>
-    <button 
-        type="button" 
-        class="text-green-700 hover:text-green-900 ml-2" 
-        onclick="document.getElementById('toast-success').remove()"
-    >
-        ×
-    </button>
-</div>
-@endif
-
-@if(session('error'))
-<div 
-    id="toast-error" 
-    class="fixed top-5 right-5 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded shadow-md" 
-    role="alert"
->
-    <strong class="font-bold">Error!</strong>
-    <span class="block sm:inline">{{ session('error') }}</span>
-    <button 
-        type="button" 
-        class="text-red-700 hover:text-red-900 ml-2" 
-        onclick="document.getElementById('toast-error').remove()"
-    >
-        ×
-    </button>
-</div>
-@endif
-
-    
+   
 
 <div class="w-full px-2 py-2">
     <div class="mb-4 flex flex-col justify-between gap-8 md:flex-row md:items-center">

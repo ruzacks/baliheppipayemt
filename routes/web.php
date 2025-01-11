@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\FeeSettingController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IpaymuController;
 use App\Http\Controllers\MidtransController;
@@ -11,15 +12,16 @@ use Illuminate\Support\Facades\Route;
 
 
 
+
 Route::middleware(DisableCors::class)->group(function () {
     Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
     Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
     Route::get('api/check-payment', [IpaymuController::class, 'checkPayment']);
 });
 
-Route::get('/', function () {
-    return view('page.homepage');
-});
+// Route::get('/', function () {
+//     return view('page.homepage');
+// });
 
 Route::get('/mybill', function () {
     return view('page.payment-app');
@@ -52,19 +54,22 @@ Route::post('/token-request', [MidtransController::class, 'getSnapToken'])->name
 
 Route::get('/status-request/{trans_id}', [MidtransController::class, 'getStatus'])->name('status.request');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::get('linkbayar', function () {
     return view('page.linkbayar');
 });
 
 Route::middleware('auth')->group(function () {
+    Route::get('/', [AdminController::class, 'index'])->name('admin-panel');
     Route::get('admin-panel', [AdminController::class, 'index'])->name('admin-panel');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource('fee-settings', FeeSettingController::class);
+
 });
 
 Route::get('initiate', [IpaymuController::class, 'initiate']);
