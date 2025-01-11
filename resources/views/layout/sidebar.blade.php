@@ -41,6 +41,11 @@
                       Dashboard
                   </a>
               </li>
+              <li>
+                <a href="{{ route('fee-settings.index') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+                  Fee Settings
+                </a>
+            </li>
           </ul>
       </nav>
   </div>
