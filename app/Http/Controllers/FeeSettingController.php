@@ -63,4 +63,10 @@ class FeeSettingController extends Controller
 
         return redirect()->route('fee-settings.index')->with('success', 'Fee setting deleted successfully.');
     }
+
+    public function getTransMethod()
+    {
+        $feeSettings = FeeSetting::all();
+        return $feeSettings;
+    }
 }

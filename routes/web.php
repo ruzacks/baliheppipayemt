@@ -17,6 +17,7 @@ Route::middleware(DisableCors::class)->group(function () {
     Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
     Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
     Route::get('api/check-payment', [IpaymuController::class, 'checkPayment']);
+    Route::get('api/get-trans-method', [FeeSettingController::class, 'getTransMethod']);
 });
 
 // Route::get('/', function () {
@@ -71,6 +72,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('fee-settings', FeeSettingController::class);
 
 });
+
 
 Route::get('initiate', [IpaymuController::class, 'initiate']);
 
