@@ -11,8 +11,11 @@ class IpaymuController extends Controller
     public function getHeader($requestBody)
     {
         // *Don't change this
-        $va = '0000002214342159'; //get on iPaymu dashboard
-        $apiKey = 'SANDBOX06BF6179-D0EC-460F-B765-59BB69650051'; //get on iPaymu dashboard
+        // $va = '0000002214342159'; //get on iPaymu dashboard
+        // $apiKey = 'SANDBOX06BF6179-D0EC-460F-B765-59BB69650051'; //get on iPaymu dashboard
+
+        $va = '1179002214342159';
+        $apiKey = '91DE0716-DEFD-4208-AAFC-E8B88C44A06B';
         
         $stringToSign = strtoupper('POST') . ':' . $va . ':' . $requestBody . ':' . $apiKey;
         $signature = hash_hmac('sha256', $stringToSign, $apiKey);
@@ -108,8 +111,8 @@ class IpaymuController extends Controller
 
         
     
-        $url = 'https://sandbox.ipaymu.com/api/v2/payment/direct'; // for development mode
-        // $url          = 'https://my.ipaymu.com/api/v2/payment/direct'; // for production mode\
+        // $url = 'https://sandbox.ipaymu.com/api/v2/payment/direct'; // for development mode
+        $url          = 'https://my.ipaymu.com/api/v2/payment/direct'; // for production mode\
 
 
     
@@ -180,10 +183,13 @@ class IpaymuController extends Controller
     {
         $invoice = Invoice::where('invoice_code', $request->inv_code)->first();
 
-        $url = "https://sandbox.ipaymu.com/api/v2/transaction";
+        // $url = "https://sandbox.ipaymu.com/api/v2/transaction";
+        $url = "https://my.ipaymu.com/api/v2/transaction";
+
 
         $body['transactionId'] = trim($invoice->trans_id);
-        $body['account'] = trim("0000002214342159");
+        $body['account'] = trim("1179002214342159");
+        // $body['account'] = trim("0000002214342159");
         // End Request Body//
         
         $jsonBody = json_encode($body, JSON_UNESCAPED_SLASHES);
