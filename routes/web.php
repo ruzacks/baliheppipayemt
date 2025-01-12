@@ -16,13 +16,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(DisableCors::class)->group(function () {
     Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
     Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
+    Route::post('api/ipaymu-callback', [IpaymuController::class, 'apiCallback'])->name('ipaymuCallback');
+
     Route::get('api/check-payment', [IpaymuController::class, 'checkPayment']);
     Route::get('api/get-trans-method', [FeeSettingController::class, 'getTransMethod']);
 });
 
-// Route::get('/', function () {
-//     return view('page.homepage');
-// });
+Route::get('/', function () {
+    return view('page.homepage');
+});
 
 Route::get('/mybill', function () {
     return view('page.payment-app');
@@ -64,7 +66,7 @@ Route::get('linkbayar', function () {
 });
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin-panel');
+    // Route::get('/', [AdminController::class, 'index'])->name('admin-panel');
     Route::get('admin-panel', [AdminController::class, 'index'])->name('admin-panel');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

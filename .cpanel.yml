@@ -1,4 +1,4 @@
 deployment:
   tasks:
-    - export DEPLOYPATH=/home/nbhn6282/public_html/soojabali.com/admin
+    - export DEPLOYPATH=/home/nbhn6282/public_html/baliheppi.com
     - /bin/cp -R * $DEPLOYPATH

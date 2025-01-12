@@ -118,7 +118,7 @@ class IpaymuController extends Controller
         $body['phone'] = trim("08111111111");
         $body['email'] = trim("test@example.com");
         $body['amount'] = floatval($invoice->amount);
-        $body['notifyUrl'] = trim('https://your-website.com/callback-url');
+        $body['notifyUrl'] = route('ipaymuCallback');
         $body['referenceId'] = $invoice->invoice_code; //your reference id
         $body['paymentMethod'] = trim("qris");
         $body['paymentChannel'] = trim("mpm");
@@ -226,6 +226,21 @@ class IpaymuController extends Controller
                 ]);
             }
         }
+    }
+
+    public function apiCallback(Request $request)
+    {
+        $transId = $request->trx_id;
+
+        $invoice = Invoice::where('trans_id', $transId)->first();
+
+        if($invoice){
+            $invoice->status = $request->status;
+            $invoice->save();
+        }
+
+        return true;
+
     }
 
 
