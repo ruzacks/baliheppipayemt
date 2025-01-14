@@ -15,12 +15,12 @@
                     class="w-full aria-disabled:cursor-not-allowed outline-none focus:outline-none text-stone-800 placeholder:text-stone-600/60 ring-transparent border border-stone-200 transition-all ease-in disabled:opacity-50 disabled:pointer-events-none select-none text-sm py-2 px-2.5 ring shadow-sm bg-white rounded-lg duration-100 hover:border-stone-300 hover:ring-none focus:border-stone-400 focus:ring-none peer" 
                     />
                 </div> --}}
-                <button 
-                    id="openModalBtn"
+                <a href="{{ route('product-list') }}"
+                    {{-- id="openModalBtn" --}}
                     class="inline-flex items-center justify-center border align-middle select-none font-sans font-medium text-center transition-all ease-in text-sm py-2 px-3 shadow-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 duration-150"
                 >
                     Add
-                </button>
+                </a>
                 </div>
         </div>
 

@@ -50,8 +50,8 @@
         <div class="text-lg font-semibold text-gray-700 mb-4">Pilih metode Pembayaran</div>
         <div class="flex flex-col space-y-3">
             <!-- Kartu Debit/Kredit Button with Logos -->
-            <button class="w-full py-3 px-2 bg-gray-400 text-white font-medium rounded flex items-center justify-between space-x-4 flex-wrap" disabled>
-                <span class="whitespace-nowrap">Segera Hadir</span>
+            <button class="w-full py-3 px-2 bg-gray-400 text-white font-medium rounded flex items-center justify-between space-x-4 flex-wrap" id="card-btn" onclick="generateCardPayment()" disabled>
+                <span class="whitespace-nowrap">Credit Card</span>
                 <div class="flex space-x-2">
                     <!-- Logos for MasterCard, Visa, JCB, American Express -->
                     <img src="https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png" alt="MasterCard" class="h-5">
@@ -64,7 +64,7 @@
         
             <!-- E-Wallet Button with QRIS Logo -->
             <button class="w-full py-3 px-2 bg-blue-300 text-white font-medium rounded flex items-center justify-between space-x-4" id="qris-btn" onclick="generateQRPayment()" disabled>
-                <span>E-Wallet</span>
+                <span>QRIS</span>
                 <img src="https://whatthelogo.com/storage/logos/quick-response-code-indonesia-standard-qris-274928.png" alt="QRIS" class="h-5">
             </button>
         </div>
@@ -94,6 +94,24 @@
             </div>
         </div>
     </div>
+
+    <div id="dokuModal" class="fixed inset-0 bg-gray-800 bg-opacity-75 flex items-center justify-center hidden">
+        <div class="bg-white rounded-lg overflow-hidden shadow-lg max-w-2xl w-full">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between p-4 border-b">
+                <h2 class="text-lg font-semibold">Credit Card Payment</h2>
+                <button onclick="closeModal()" class="text-gray-500 hover:text-red-600 focus:outline-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <!-- Modal Content -->
+            <iframe src="" frameborder="0" class="w-full h-96"></iframe>
+        </div>
+    </div>
+    
+    
 
     <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
 
@@ -132,6 +150,7 @@
                     // countdownRunning = false;
                     startCountdown(invoiceDate);
                     document.getElementById('qris-btn').removeAttribute('disabled');
+                    document.getElementById('card-btn').removeAttribute('disabled');
                 } else {
                     if (data.status === 'expired') {
                         showToast('The invoice has expired.', 'error');
@@ -146,6 +165,7 @@
                         countdownElement.innerText = '0:00';
                     }
                     document.getElementById('qris-btn').setAttribute('disabled', 'true');
+                    document.getElementById('card-btn').setAttribute('disabled', 'true');
                 }
             })
             .catch(error => {
@@ -211,6 +231,40 @@
             toast.classList.add('opacity-0');
             setTimeout(() => toast.remove(), 300); // Remove after fade-out
         }, 3000);
+    }
+
+    async function generateCardPayment() {
+        const invoice = document.getElementById('invoice').value;
+
+        try {
+            const response = await fetch('http://127.0.0.1/payment-app/api/request-card-payment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ inv_code: invoice }),
+            });
+
+            const result = await response.json();
+
+            if (response.ok && result.response.credit_card_payment_page) {
+                // Set the iframe source to the payment page URL
+                document.querySelector('#dokuModal iframe').src = result.response.credit_card_payment_page.url;
+
+                // Display the modal
+                document.getElementById('dokuModal').classList.remove('hidden');
+            } else {
+                alert('Failed to generate card payment. Please try again.');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('An error occurred while generating the payment.');
+        }
+    }
+
+    function closeModal() {
+        document.getElementById('dokuModal').classList.add('hidden');
+        document.querySelector('#dokuModal iframe').src = ''; // Reset iframe source
     }
 
     async function generateQRPayment() {
@@ -291,6 +345,7 @@
         }
     }
 
+   
     // Close modal functionality
     document.getElementById('reloadPage').addEventListener('click', () => {
         location.reload();

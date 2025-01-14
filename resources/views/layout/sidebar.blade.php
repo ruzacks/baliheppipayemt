@@ -15,6 +15,16 @@
                 Fee Settings
             </a>
         </li>
+        <li>
+          <a href="{{ route('products.index') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+              Produk
+          </a>
+      </li>
+      <li>
+        <a href="{{ route('api_services.index') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+            Payment API
+        </a>
+    </li>
       </ul>
   </nav>
 </aside>
@@ -46,6 +56,16 @@
                   Fee Settings
                 </a>
             </li>
+            <li>
+              <a href="{{ route('products.index') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+                Produk
+              </a>
+          </li>
+          <li>
+            <a href="{{ route('api_services.index') }}" class="flex items-center text-gray-600 hover:bg-gray-100 p-3 rounded-lg">
+              Payment API
+            </a>
+        </li>
           </ul>
       </nav>
   </div>

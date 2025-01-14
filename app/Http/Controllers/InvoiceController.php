@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Invoice;
+use App\Models\InvoiceDetail;
 use Illuminate\Http\Request;
+use PhpParser\Node\Expr\FuncCall;
 
 class InvoiceController extends Controller
 {
@@ -90,5 +92,54 @@ class InvoiceController extends Controller
             'message' => 'Invoice not found'
         ], 404);
     }
+
+    public function createInvoice(Request $request) 
+{
+    // Validate the incoming request
+    $request->validate([
+        'cart' => 'required|array',
+        'cart.*.id' => 'required|integer',
+        'cart.*.name' => 'required|string',
+        'cart.*.price' => 'required|numeric',
+        'cart.*.qty' => 'required|integer'
+    ]);
+
+    // Calculate total amount
+    $totalAmount = collect($request->cart)->sum(function ($item) {
+        return $item['price'] * $item['qty'];
+    });
+
+    // Generate a unique invoice code based on the last number
+    $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
+    $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
+    $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+    $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
+
+    // Create the invoice
+    $invoice = Invoice::create([
+        'invoice_code' => $invoiceCode,
+        'amount' => $totalAmount,
+        'status' => 'unpaid',
+        'date' => now()->toDateString()
+    ]);
+
+    // Create invoice details
+    foreach ($request->cart as $item) {
+        InvoiceDetail::create([
+            'invoice_id' => $invoice->id,
+            'product_id' => $item['id'],
+            'product_name' => $item['name'],
+            'qty' => $item['qty'],
+            'price' => $item['price']
+        ]);
+    }
+
+    // Return response with invoice code
+    return response()->json([
+        'message' => 'Invoice created successfully.',
+        'invoice_code' => $invoiceCode
+    ], 201);
+}
+
     
 }
