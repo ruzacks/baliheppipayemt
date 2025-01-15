@@ -19,7 +19,7 @@
                 />
             </a>
             <nav class="space-x-4">
-                <a href="{{ url('/products') }}" class="text-gray-600 hover:text-blue-500">Products</a>
+                <a href="{{ url('/product-list') }}" class="text-gray-600 hover:text-blue-500">Products</a>
             </nav>
         </div>
     </header>

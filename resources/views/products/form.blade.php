@@ -36,4 +36,15 @@
             required
         />
     </div>
+
+    <div class="mt-4">
+        <label for="description" class="block text-sm font-medium text-gray-600">Description</label>
+        <textarea
+            name="description"
+            id="description"
+            rows="4"
+            class="mt-1 block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200"
+            required
+        >{{ old('description', $product->description ?? '') }}</textarea>
+    </div>
 </div>

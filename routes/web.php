@@ -21,10 +21,12 @@ use Illuminate\Support\Facades\Route;
 Route::middleware(DisableCors::class)->group(function () {
     Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
     Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
-    Route::get('api/check-payment', [IpaymuController::class, 'checkPayment']);
+    Route::get('api/check-payment', [DokuController::class, 'getTransactionStatus']);
     Route::get('api/get-trans-method', [FeeSettingController::class, 'getTransMethod']);
 
     Route::post('api/request-card-payment', [DokuController::class, 'initiateCardPayment']);
+    Route::post('api/request-paylater-payment', [DokuController::class, 'initiatePaylaterPayment']);
+
     Route::get('api/callback', [DokuController::class, 'callback'])->name('callback');
 });
 
@@ -93,11 +95,12 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::get('product-list', [ProductController::class, 'productList'])->name('product-list');
+Route::get('product/{product}', [ProductController::class, 'singleProduct'])->name('product-single');
 Route::post('create-invoice', [InvoiceController::class, 'createInvoice'])->name('create-invoice');
 
 Route::get('initiate', [IpaymuController::class, 'initiate']);
 
-Route::get('doku-initiate', [DokuController::class, 'initiate']);
+Route::get('doku-initiate', [DokuController::class, 'initiateAkulaku']);
 Route::get('doku-trans-status', [DokuController::class, 'getTransactionStatus'])->name('doku-callback');
 
 

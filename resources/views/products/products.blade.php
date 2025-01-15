@@ -18,15 +18,19 @@
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         @foreach($products as $product)
         <div class="overflow-hidden rounded-lg border border-gray-200 bg-white shadow hover:shadow-lg">
-            <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden">
-                <img 
-                    src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//catalog-image/100/MTA-150688314/no-brand_no-brand_full01.jpg" 
-                    alt="{{ $product->name }}" 
-                    class="object-cover w-full h-full"
-                />
-            </div>
+            <a href="{{ route('product-single', $product->id) }}" class="block">
+                <div class="aspect-w-1 aspect-h-1 w-full overflow-hidden">
+                    <img 
+                        src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//catalog-image/100/MTA-150688314/no-brand_no-brand_full01.jpg" 
+                        alt="{{ $product->name }}" 
+                        class="object-cover w-full h-full"
+                    />
+                </div>
+                <div class="p-4">
+                    <h2 class="text-lg font-medium text-gray-800">{{ $product->name }}</h2>
+                </div>
+            </a>
             <div class="p-4">
-                <h2 class="text-lg font-medium text-gray-800">{{ $product->name }}</h2>
                 <p class="text-gray-600">IDR {{ number_format($product->price, 0, ',', '.') }}</p>
                 <div class="mt-3 text-center">
                     <button 
@@ -38,6 +42,7 @@
                 </div>
             </div>
         </div>
+        
         @endforeach
     </div>
 </div>
@@ -58,20 +63,7 @@
 <div id="checkoutModal" class="fixed inset-0 hidden bg-gray-900 bg-opacity-50">
     <div class="relative mx-auto mt-24 w-11/12 max-w-lg rounded-lg bg-white p-6">
         <h2 class="text-lg font-bold">Checkout</h2>
-        {{-- <form id="checkoutForm" class="mt-4 space-y-4">
-            <div>
-                <label for="name" class="block text-sm font-medium text-gray-700">Name</label>
-                <input type="text" id="name" name="name" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            </div>
-            <div>
-                <label for="address" class="block text-sm font-medium text-gray-700">Address</label>
-                <input type="text" id="address" name="address" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            </div>
-            <div>
-                <label for="phone" class="block text-sm font-medium text-gray-700">Phone</label>
-                <input type="text" id="phone" name="phone" class="mt-1 block w-full rounded border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500">
-            </div>
-        </form> --}}
+
         <p class="mt-4">Total: IDR <span id="checkoutTotal">0</span></p>
         <div class="mt-6 text-right">
             <button onclick="toggleModal('checkoutModal')" class="mr-2 rounded bg-gray-300 px-4 py-2">Cancel</button>
@@ -123,12 +115,13 @@
             cartItemsContainer.innerHTML += `
                 <div class="flex justify-between border-b py-2">
                     <span>${item.name} (x${item.qty})</span>
-                    <span>IDR ${item.price * item.qty}</span>
+                    <span>IDR ${(item.price * item.qty).toLocaleString('id-ID')}</span>
                 </div>
             `;
         });
-        document.getElementById('checkoutTotal').innerText = total;
+        document.getElementById('checkoutTotal').innerText = total.toLocaleString('id-ID');
     }
+
 
     function toggleModal(modalId) {
         const modal = document.getElementById(modalId);

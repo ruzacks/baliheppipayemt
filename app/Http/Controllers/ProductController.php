@@ -24,6 +24,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'image_url' => 'nullable|url',
+            'description' => 'nullable',
         ]);
 
         Product::create($request->all());
@@ -42,6 +43,7 @@ class ProductController extends Controller
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
             'image_url' => 'nullable|url',
+            'description' => 'nullable',
         ]);
 
         $product->update($request->all());
@@ -60,5 +62,10 @@ class ProductController extends Controller
     {
         $products = Product::all(); // Customize the number of items per page
         return view('products.products', compact('products'));
+    }
+
+    public function singleProduct(Product $product)
+    {
+        return view('products.single-product', compact('product'));
     }
 }

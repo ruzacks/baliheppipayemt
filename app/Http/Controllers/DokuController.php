@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\ApiService;
+use App\Models\Customer;
 use App\Models\Invoice;
 use Illuminate\Http\Request;
 
@@ -135,12 +136,19 @@ class DokuController extends Controller
             $invoice->api_status = $response;
             $invoice->save();
         
-            return redirect()->to('http://127.0.0.1/payment-app/link-bayar-success');
+            return redirect()->to('http://127.0.0.1/linkbayar/success.php');
             
         } else if ($result->transaction->status == "PENDING") {
-            return redirect()->to('http://127.0.0.1/payment-app/link-bayar-pending');
+            $invoice->payment_by = $result->service->id;
+            $invoice->api_status = $response;
+            $invoice->status = 'pending';
+            $invoice->save();
+            return redirect()->to("http://127.0.0.1/linkbayar/pending.php?inv_code=$invoice->invoice_code");
         } else {
-            return redirect()->to('http://127.0.0.1/payment-app/link-bayar-failed');
+            $invoice->payment_by = $result->service->id;
+            $invoice->api_status = $response;
+            $invoice->save();
+            return redirect()->to('http://127.0.0.1/linkbayar/failed.php');
         }
 
     }
@@ -197,4 +205,391 @@ class DokuController extends Controller
     {
         return $request;
     }
+
+    public function initiateAkulaku()
+    {
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $invoice = Invoice::where('invoice_code', 'INV-2025010006')->first();
+
+        $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            return [
+                "name" => $detail->product_name,
+                "price" => $detail->price,
+                "quantity" => $detail->qty,
+                "sku" => "kerupuk-kulit",
+                "category" => "food"
+            ];
+        })->toArray();
+
+        $endpoint = "/akulaku-peer-to-peer/v2/generate-order";
+        $body = json_encode([
+            "order" => [
+                "invoice_number" => $invoice->invoice_code,
+                "amount" => intval($invoice->amount), 
+                "line_items" => $lineItems,
+                "callback_url" => route('doku-callback') . '?inv_code=' . $invoice->invoice_code,
+                "auto_redirect" => true,
+                "descriptor" => "Test Descriptor"
+            ],
+            "payment" => [
+                "merchant_unique_reference" => $invoice->invoice_code . random_int(1,100)
+            ],
+            "customer" => [
+                "id" => "CUST-0001",
+                "name" => "Anton Budiman",
+                "phone" => "6285694566147",
+                "address" => "Menara Mulia Lantai 8",
+                "city" => "Jakarta Selatan",
+                "state" => "DKI Jakarta",
+                "postcode" => "120129"
+            ],
+        ]);
+
+        // return json_decode($body);
+
+        $requestAtt = $this->getRequestIdAndTimestamp();
+        $signature = $this->getSignature($endpoint, $body, $requestAtt, $apiService);
+        $headers = $this->getHeader($signature, $requestAtt, $apiService);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiService->attribute['base_url'] . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return response()->json(['error' => $error], 500);
+        }
+
+        return response()->json(['response' => json_decode($response, true)], 200);
+    }
+
+    public function initiateKredivo()
+    {
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $invoice = Invoice::where('invoice_code', 'INV-2025010006')->first();
+
+        $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            return [
+                "name" => $detail->product_name,
+                "price" => $detail->price,
+                "quantity" => $detail->qty,
+                "id" => strval($detail->product_id),
+                "type" => "food",
+                "url" => route('product-single', $detail->product_id)
+            ];
+        })->toArray();
+
+        $endpoint = "/kredivo-peer-to-peer/v2/generate-order";
+        $body = json_encode([
+            "order" => [
+                "invoice_number" => $invoice->invoice_code,
+                "amount" => intval($invoice->amount), //currently it .00 at the end how to remove that?
+                "line_items" => $lineItems,
+                "callback_url" => route('doku-callback') . '?inv_code=' . $invoice->invoice_code,
+                "auto_redirect" => true,
+                "descriptor" => "Test Descriptor"
+            ],
+            "peer_to_peer_info" => [
+                "merchant_unique_reference" => $invoice->invoice_code
+            ],
+            "customer"=> [
+                "first_name"=> "andreas",
+                "last_name"=> "dharmawan",
+                "phone"=> "081398154809",
+                "email"=> "andreas@email.com"
+            ],
+            "shipping_address"=> [
+                "first_name"=> "andreas",
+                "last_name"=> "dharmawan",
+                "address"=> "Jalan Teknologi Indonesia No. 25",
+                "city"=> "Jakarta",
+                "postal_code"=> "12960",
+                "phone"=> "081513114262",
+                "country_code"=> "IDN"
+            ],
+        ]);
+
+        // return json_decode($body);
+
+        $requestAtt = $this->getRequestIdAndTimestamp();
+        $signature = $this->getSignature($endpoint, $body, $requestAtt, $apiService);
+        $headers = $this->getHeader($signature, $requestAtt, $apiService);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiService->attribute['base_url'] . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return response()->json(['error' => $error], 500);
+        }
+
+        return response()->json(['response' => json_decode($response, true)], 200);
+    }
+
+    public function initiateIndodana()
+    {
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $invoice = Invoice::where('invoice_code', 'INV-2025010005')->first();
+
+        $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            return [
+                "name" => $detail->product_name,
+                "price" => $detail->price,
+                "quantity" => $detail->qty,
+                "id" => strval($detail->product_id),
+                "category" => "food-retail-and-service",
+                // "url" => route('product-single', $detail->product_id)
+            ];
+        })->toArray();
+
+        $endpoint = "/indodana-peer-to-peer/v2/generate-order";
+        $body = json_encode([
+            "order" => [
+            "invoice_number" => "MINV20201231468",
+            "line_items" => [
+                [
+                    "name" => "Ayam",
+                    "price" => 50000,
+                    "quantity" => 2,
+                    "id" => "1002",
+                    "category" => "food-retail-and-service",
+                    "url" => "https://merchant.com/product_1002",
+                    "image_url" => "https://merchant.com/product_1002/image",
+                    "type" => "handphone"
+                ]
+            ],
+            "amount" => 100000,
+            "callback_url" => "https://merchant.com/return-url",
+            "callback_url_cancel" => "https://merchant.com/cancel-url"
+            ],
+            "peer_to_peer_info" => [
+                "expired_time" => 60,
+                "merchant_unique_reference" => "60123"
+            ],
+            "customer" => [
+                "first_name" => "andreas",
+                "last_name" => "dharmawan",
+                "phone" => "081939815480",
+                "email" => "andreas@email.com"
+            ],
+            "billing_address" => [
+                "first_name" => "andreas",
+                "last_name" => "dharmawan",
+                "address" => "Jalan Teknologi Indonesia No. 25",
+                "city" => "Jakarta",
+                "postal_code" => "12960",
+                "phone" => "081513114262",
+                "country_code" => "IDN"
+            ],
+            "shipping_address" => [
+                "first_name" => "andreas",
+                "last_name" => "dharmawan",
+                "address" => "Jalan Teknologi Indonesia No. 25",
+                "city" => "Jakarta",
+                "postal_code" => "12960",
+                "phone" => "081513114262",
+                "country_code" => "IDN"
+            ],
+            "additional_info" => [
+                "override_notification_url" => "https://another.example.com/payments/notifications"
+            ]
+        ]);
+
+        // return json_decode($body);
+
+        $requestAtt = $this->getRequestIdAndTimestamp();
+        $signature = $this->getSignature($endpoint, $body, $requestAtt, $apiService);
+        $headers = $this->getHeader($signature, $requestAtt, $apiService);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiService->attribute['base_url'] . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return response()->json(['error' => $error], 500);
+        }
+
+        return response()->json(['response' => json_decode($response, true)], 200);
+    }
+
+    public function initiatePaylaterPayment(Request $request)
+    {
+        
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $invoice = Invoice::where('invoice_code', $request['inv_code'])->first();
+        
+        if($request['cust_data']['provider'] == 'akulaku'){
+            $endpoint = "/akulaku-peer-to-peer/v2/generate-order";
+            $body = $this->generateAkulakuBody($invoice, $request['cust_data']);
+        } else if($request['cust_data']['provider'] == 'kredivo'){
+            $endpoint = "/kredivo-peer-to-peer/v2/generate-order";
+            $body = $this->generateKredivoBody($invoice, $request['cust_data']);
+        }
+
+        // return json_decode($body);
+
+        $requestAtt = $this->getRequestIdAndTimestamp();
+        $signature = $this->getSignature($endpoint, $body, $requestAtt, $apiService);
+        $headers = $this->getHeader($signature, $requestAtt, $apiService);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiService->attribute['base_url'] . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return response()->json(['error' => $error], 500);
+        }
+
+        return response()->json(['response' => json_decode($response, true)], 200);
+    }
+
+    public function generateAkulakuBody($invoice, $custData)
+    {
+        // Check if customer exists; if not, create a new one
+        $customer = Customer::firstOrCreate(
+            ['email' => $custData['email']],
+            [
+                'first_name' => $custData['first_name'],
+                'last_name' => $custData['last_name'],
+                'phone' => $custData['phone'],
+                'address' => $custData['address'],
+                'city' => $custData['city'],
+                'state' => $custData['state'],
+                'postcode' => $custData['postcode'],
+                'customer_code' => 'CUST-' . uniqid(), // Generate a unique customer code
+            ]
+        );
+
+        // Map invoice details into line items
+        $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            return [
+                "name" => $detail->product_name,
+                "price" => $detail->price,
+                "quantity" => $detail->qty,
+                "sku" => "kerupuk-kulit",
+                "category" => "food"
+            ];
+        })->toArray();
+
+        // Build the request body
+        $body = json_encode([
+            "order" => [
+                "invoice_number" => $invoice->invoice_code,
+                "amount" => intval($invoice->amount),
+                "line_items" => $lineItems,
+                "callback_url" => route('doku-callback') . '?inv_code=' . $invoice->invoice_code,
+                "auto_redirect" => true,
+                "descriptor" => "Test Descriptor"
+            ],
+            "payment" => [
+                "merchant_unique_reference" => $invoice->invoice_code . uniqid()
+            ],
+            "customer" => [
+                "id" => $customer->customer_code,
+                "name" => $customer->first_name . ' ' . $customer->last_name,
+                "phone" => $customer->phone,
+                "address" => $customer->address,
+                "city" => $customer->city,
+                "state" => $customer->state,
+                "postcode" => $customer->postcode
+            ],
+        ]);
+
+        return $body;
+    }
+
+    public function generateKredivoBody($invoice, $custData)
+    {
+        // Check if customer exists; if not, create a new one
+        $customer = Customer::firstOrCreate(
+            ['email' => $custData['email']],
+            [
+                'first_name' => $custData['first_name'],
+                'last_name' => $custData['last_name'],
+                'phone' => $custData['phone'],
+                'address' => $custData['address'],
+                'city' => $custData['city'],
+                'state' => $custData['state'],
+                'postcode' => $custData['postcode'],
+                'customer_code' => 'CUST-' . uniqid(), // Generate a unique customer code
+            ]
+        );
+
+        // Map invoice details into line items
+        $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            return [
+                "name" => $detail->product_name,
+                "price" => $detail->price,
+                "quantity" => $detail->qty,
+                "id" => strval($detail->product_id),
+                "type" => "food",
+                "url" => route('product-single', $detail->product_id)
+            ];
+        })->toArray();
+
+        // Build the request body
+        $body = json_encode([
+            "order" => [
+                "invoice_number" => $invoice->invoice_code,
+                "amount" => intval($invoice->amount), //currently it .00 at the end how to remove that?
+                "line_items" => $lineItems,
+                "callback_url" => route('doku-callback') . '?inv_code=' . $invoice->invoice_code,
+                "auto_redirect" => true,
+                "descriptor" => "Test Descriptor"
+            ],
+            "peer_to_peer_info" => [
+                "merchant_unique_reference" => $invoice->invoice_code . uniqid()
+            ],
+            "customer"=> [
+                "first_name"=> $customer->first_name,
+                "last_name"=> $customer->last_name,
+                "phone"=> $customer->phone,
+                "email"=> $customer->email
+            ],
+            "shipping_address"=> [
+                "first_name"=> $customer->first_name,
+                "last_name"=> $customer->last_name,
+                "address"=> $customer->address,
+                "city"=> $customer->city,
+                "postal_code"=> $customer->postcode,
+                "phone"=> $customer->phone,
+                "country_code"=> "IDN"
+            ],
+        ]);
+
+        return $body;
+    }
+
+
 }
