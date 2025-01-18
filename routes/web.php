@@ -3,6 +3,7 @@
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\ApiServiceController;
 use App\Http\Controllers\DokuController;
+use App\Http\Controllers\FasPayController;
 use App\Http\Controllers\FeeSettingController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\IpaymuController;
@@ -82,26 +83,29 @@ Route::get('linkbayar', function () {
 })->name('linkbayar');
 
 Route::middleware('auth')->group(function () {
-    Route::get('/', [AdminController::class, 'index'])->name('admin-panel');
-    Route::get('admin-panel', [AdminController::class, 'index'])->name('admin-panel');
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/admin', [AdminController::class, 'index'])->name('admin-panel');
+    Route::get('/admin/admin-panel', [AdminController::class, 'index'])->name('admin-panel');
+    Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('fee-settings', FeeSettingController::class);
-    Route::resource('products', ProductController::class);
-    Route::resource('api_services', ApiServiceController::class);
+    Route::resource('/admin/fee-settings', FeeSettingController::class);
+    Route::resource('/admin/products', ProductController::class);
+    Route::resource('/admin/api_services', ApiServiceController::class);
 
 
 });
 
-Route::get('product-list', [ProductController::class, 'productList'])->name('product-list');
+Route::get('/', [ProductController::class, 'productList'])->name('product-list');
 Route::get('product/{product}', [ProductController::class, 'singleProduct'])->name('product-single');
 Route::post('create-invoice', [InvoiceController::class, 'createInvoice'])->name('create-invoice');
 
 Route::get('initiate', [IpaymuController::class, 'initiate']);
 
-Route::get('doku-initiate', [DokuController::class, 'initiateAkulaku']);
+Route::get('doku-initiate', [DokuController::class, 'initiateIndodana']);
 Route::get('doku-trans-status', [DokuController::class, 'getTransactionStatus'])->name('doku-callback');
 
+
+Route::get('faspay-initiate', [FasPayController::class, 'initiateKredivo']);
+Route::post('/api/faspay-callback', [FasPayController::class, 'callback'])->name('faspay-callback');
 
 require __DIR__.'/auth.php';

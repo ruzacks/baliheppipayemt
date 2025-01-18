@@ -345,7 +345,7 @@ class DokuController extends Controller
     {
         $apiService = ApiService::where('name', 'Doku')->firstOrFail();
 
-        $invoice = Invoice::where('invoice_code', 'INV-2025010005')->first();
+        $invoice = Invoice::where('invoice_code', 'INV-2025010009')->first();
 
         $lineItems = $invoice->invoice_detail->map(function ($detail) {
             return [
@@ -361,7 +361,7 @@ class DokuController extends Controller
         $endpoint = "/indodana-peer-to-peer/v2/generate-order";
         $body = json_encode([
             "order" => [
-            "invoice_number" => "MINV20201231468",
+            "invoice_number" => "MINV20201231468" . uniqid(),
             "line_items" => [
                 [
                     "name" => "Ayam",
@@ -369,23 +369,23 @@ class DokuController extends Controller
                     "quantity" => 2,
                     "id" => "1002",
                     "category" => "food-retail-and-service",
-                    "url" => "https://merchant.com/product_1002",
-                    "image_url" => "https://merchant.com/product_1002/image",
+                    // "url" => "https://merchant.com/product_1002",
+                    // "image_url" => "https://merchant.com/product_1002/image",
                     "type" => "handphone"
                 ]
             ],
             "amount" => 100000,
-            "callback_url" => "https://merchant.com/return-url",
-            "callback_url_cancel" => "https://merchant.com/cancel-url"
+            "callback_url" => "https://soojabali.com/return-url",
+            // "callback_url_cancel" => "https://merchant.com/cancel-url"
             ],
             "peer_to_peer_info" => [
                 "expired_time" => 60,
-                "merchant_unique_reference" => "60123"
+                "merchant_unique_reference" => "60123" . uniqid()
             ],
             "customer" => [
                 "first_name" => "andreas",
                 "last_name" => "dharmawan",
-                "phone" => "081939815480",
+                "phone" => "62838499610",
                 "email" => "andreas@email.com"
             ],
             "billing_address" => [
@@ -394,7 +394,7 @@ class DokuController extends Controller
                 "address" => "Jalan Teknologi Indonesia No. 25",
                 "city" => "Jakarta",
                 "postal_code" => "12960",
-                "phone" => "081513114262",
+                "phone" => "62838499610",
                 "country_code" => "IDN"
             ],
             "shipping_address" => [
@@ -403,7 +403,7 @@ class DokuController extends Controller
                 "address" => "Jalan Teknologi Indonesia No. 25",
                 "city" => "Jakarta",
                 "postal_code" => "12960",
-                "phone" => "081513114262",
+                "phone" => "62838499610",
                 "country_code" => "IDN"
             ],
             "additional_info" => [
