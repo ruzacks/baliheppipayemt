@@ -10,8 +10,10 @@ use App\Http\Controllers\IpaymuController;
 use App\Http\Controllers\MidtransController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SalesPersonController;
 use App\Http\Middleware\DisableCors;
 use App\Models\ApiService;
+use App\Models\SalesPerson;
 use Illuminate\Support\Facades\Route;
 
 
@@ -91,7 +93,18 @@ Route::middleware('auth')->group(function () {
     Route::resource('/admin/fee-settings', FeeSettingController::class);
     Route::resource('/admin/products', ProductController::class);
     Route::resource('/admin/api_services', ApiServiceController::class);
+    Route::resource('/admin/sales_persons', SalesPersonController::class);
 
+    Route::get('/admin/products-ajax', [ProductController::class, 'indexAjax'])->name('products-ajax');
+    Route::get('/admin/sales_persons-ajax', [SalesPersonController::class, 'indexAjax'])->name('sales-persons-ajax');
+
+    Route::get('/admin/create-invoice', [InvoiceController::class, 'createInvoiceAdmin'])->name('create-invoice-admin');
+    Route::get('/admin/edit-invoice/{invoice}', [InvoiceController::class, 'editInvoiceAdmin'])->name('edit-invoice-admin');
+    Route::post('update-invoice/{invoice}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
+    
+    Route::get('/admin/create-invoice-manual', [InvoiceController::class, 'createInvoiceAdminManual'])->name('create-invoice-admin-manual');
+    Route::post('/admin/store-invoice-manual', [InvoiceController::class, 'storeInvoiceAdminManual'])->name('store-invoice-admin-manual');
+    Route::post('update-invoice-manual/{invoice}', [InvoiceController::class, 'updateInvoiceManual'])->name('update-invoice-manual');
 
 });
 
@@ -103,6 +116,8 @@ Route::get('initiate', [IpaymuController::class, 'initiate']);
 
 Route::get('doku-initiate', [DokuController::class, 'initiateIndodana']);
 Route::get('doku-trans-status', [DokuController::class, 'getTransactionStatus'])->name('doku-callback');
+Route::get('doku-test', [DokuController::class, 'calculateDokuNetto']);
+
 
 
 Route::get('faspay-initiate', [FasPayController::class, 'initiateKredivo']);

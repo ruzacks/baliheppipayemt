@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
+use App\Models\SalesPerson;
 use Illuminate\Http\Request;
 use PhpParser\Node\Expr\FuncCall;
 
@@ -70,20 +71,20 @@ class InvoiceController extends Controller
                     'status' => 'expired'
                 ]);
             }
-            // Check if the invoice date is within the last 24 hours
-            $timeDifference = now()->diffInHours($invoice->created_at);
-            // dd(abs($timeDifference));
-            if (abs($timeDifference) <= 24) {
+            // Check if the invoice is expired based on expire_date
+            if (now()->lessThanOrEqualTo($invoice->expire_date)) {
                 return response()->json([
                     'status' => 'success',
                     'amount' => $invoice->amount,
-                    'date'   => $invoice->created_at
+                    'date'   => $invoice->created_at,
+                    'expire_date' => $invoice->expire_date
                 ]);
             } else {
                 return response()->json([
-                    'status' => 'expired'
+                    'status' => 'expired',
                 ]);
             }
+
         }
 
         // If the invoice is not found (this shouldn't happen due to validation)
@@ -93,53 +94,205 @@ class InvoiceController extends Controller
         ], 404);
     }
 
-    public function createInvoice(Request $request) 
-{
-    // Validate the incoming request
-    $request->validate([
-        'cart' => 'required|array',
-        'cart.*.id' => 'required|integer',
-        'cart.*.name' => 'required|string',
-        'cart.*.price' => 'required|numeric',
-        'cart.*.qty' => 'required|integer'
-    ]);
+    public function createInvoiceAdmin()
+    {
+        return view('admin.create_invoice');
+    }
 
-    // Calculate total amount
-    $totalAmount = collect($request->cart)->sum(function ($item) {
-        return $item['price'] * $item['qty'];
-    });
+    public function createInvoiceAdminManual()
+    {
+        return view('admin.create_invoice_manual');
+    }
 
-    // Generate a unique invoice code based on the last number
-    $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
-    $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
-    $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-    $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
+    public function storeInvoiceAdminManual(Request $request)
+    {
+        $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
+        $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
 
-    // Create the invoice
-    $invoice = Invoice::create([
-        'invoice_code' => $invoiceCode,
-        'amount' => $totalAmount,
-        'status' => 'unpaid',
-        'date' => now()->toDateString()
-    ]);
+        $invoice = Invoice::create([
+            'invoice_code' => $invoiceCode,
+            'amount' => $request->amount,
+            'status' => 'manual',
+            'date' => now()->toDateString(),
+            'expire_date' => now(),
+            'inv_type' => 'manual',
+            'sales_person_id' => $request->salesId,
+            'sales_commission' => $request->commission ?? null,
+            'tax' => $request->tax,
+            'fee' => $request->fee,
+            'netto' => $request->netto,
+            'payment_by' => $request->paymentBy,
+        ]);
 
-    // Create invoice details
-    foreach ($request->cart as $item) {
-        InvoiceDetail::create([
-            'invoice_id' => $invoice->id,
-            'product_id' => $item['id'],
-            'product_name' => $item['name'],
-            'qty' => $item['qty'],
-            'price' => $item['price']
+        // Return response with invoice code
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Invoice created successfully.',
+            'invoice_code' => $invoiceCode
         ]);
     }
 
-    // Return response with invoice code
-    return response()->json([
-        'message' => 'Invoice created successfully.',
-        'invoice_code' => $invoiceCode
-    ], 201);
-}
+    public function createInvoice(Request $request) 
+    {
+        // Check if 'cart' or 'productsInCart' exists in the request
+        if (!$request->has('cart') && !$request->has('productsInCart')) {
+            return response()->json([
+                'error' => 'Either cart or productsInCart must be provided.'
+            ], 422);
+        }
+
+        // Determine which variable to validate
+        $cartData = $request->has('cart') ? $request->input('cart') : $request->input('productsInCart');
+
+        // Validate the chosen variable
+        $request->validate([
+            $request->has('cart') ? 'cart' : 'productsInCart' => 'required|array',
+            $request->has('cart') ? 'cart.*.id' : 'productsInCart.*.id' => 'required|integer',
+            $request->has('cart') ? 'cart.*.name' : 'productsInCart.*.name' => 'required|string',
+            $request->has('cart') ? 'cart.*.price' : 'productsInCart.*.price' => 'required|numeric',
+            $request->has('cart') ? 'cart.*.qty' : 'productsInCart.*.qty' => 'required|integer',
+        ]);
+
+        // Proceed with $cartData
+
+
+        // Calculate total amount
+        $totalAmount = collect($cartData)->sum(function ($item) {
+            return $item['price'] * $item['qty'];
+        });
+
+        // Generate a unique invoice code based on the last number
+        $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
+        $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
+        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
+        $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
+        $salesPersonId = $request->salesId ? $request->salesId : null;
+        $expireDate = $request->expireDate ? now()->addMinutes(intval($request->expireDate)) : null;
+
+        $salesData = SalesPerson::where('id', $salesPersonId)->first();
+
+        // Create the invoice
+        $invoice = Invoice::create([
+            'invoice_code' => $invoiceCode,
+            'amount' => $totalAmount,
+            'status' => 'unpaid',
+            'date' => now()->toDateString(),
+            'expire_date' => $expireDate,
+            'inv_type' => 'transaction',
+            'sales_person_id' => $salesPersonId,
+            'sales_commission' => $salesData->commission ?? null,
+        ]);
+       
+
+        // Create invoice details
+        foreach ($cartData as $item) {
+            InvoiceDetail::create([
+                'invoice_id' => $invoice->id,
+                'product_id' => $item['id'],
+                'product_name' => $item['name'],
+                'qty' => $item['qty'],
+                'price' => $item['price']
+            ]);
+        }
+
+        // Return response with invoice code
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Invoice created successfully.',
+            'invoice_code' => $invoiceCode
+        ]);
+    }
+
+    public function editInvoiceAdmin(Invoice $invoice)
+    {
+        if ($invoice->inv_type == 'transaction'){
+            return view('admin.edit_invoice', compact('invoice'));
+        } else {
+            return view('admin.create_invoice_manual', compact('invoice'));
+        }
+    }
+
+    public function updateInvoice(Request $request, Invoice $invoice) 
+    {
+        // Validate the input data
+        $request->validate([
+            'productsInCart' => 'required|array',
+            'productsInCart.*.id' => 'required|integer',
+            'productsInCart.*.name' => 'required|string',
+            'productsInCart.*.price' => 'required|numeric',
+            'productsInCart.*.qty' => 'required|integer',
+        ]);
+
+        $cartData = $request->input('productsInCart');
+
+        // Calculate the total amount
+        $totalAmount = collect($cartData)->sum(function ($item) {
+            return $item['price'] * $item['qty'];
+        });
+
+        $salesPersonId = $request->salesId ? $request->salesId : null;
+
+        $salesData = SalesPerson::where('id', $salesPersonId)->first();
+
+        // Update the invoice details
+        $invoice->update([
+            'amount' => $totalAmount,
+            'status' => $request->input('status', $invoice->status), // Optional status update
+            'expire_date' => $request->input('expireDate') ? $request->expireDate : $invoice->expire_date,
+            'sales_person_id' => $salesPersonId,
+            'sales_commission' => $request->commission,
+            'tax' => $request->tax,
+            'fee' => $request->fee,
+            'netto' => $request->netto,
+            'payment_by' => $request->paymentBy,
+        ]);
+
+        // Delete old invoice details
+        $invoice->invoice_detail()->delete();
+
+      
+        // Insert updated invoice details
+        foreach ($cartData as $item) {
+            InvoiceDetail::create([
+                'invoice_id' => $invoice->id,
+                'product_id' => $item['id'],
+                'product_name' => $item['name'],
+                'qty' => $item['qty'],
+                'price' => $item['price'],
+            ]);
+        }
+
+        // Return a success response
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Invoice updated successfully.',
+            'invoice_code' => $invoice->invoice_code
+        ]);
+    }
+
+    public function updateInvoiceManual(Request $request, Invoice $invoice) 
+    {
+        $salesPersonId = $request->salesId ? $request->salesId : null;
+
+        $invoice->update([
+            'amount' => $request->amount,
+            'sales_person_id' => $salesPersonId,
+            'sales_commission' => $request->commission,
+            'tax' => $request->tax,
+            'fee' => $request->fee,
+            'netto' => $request->netto,
+            'payment_by' => $request->paymentBy,
+        ]);
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Invoice updated successfully.',
+            'invoice_code' => $invoice->invoice_code
+        ]); 
+    }
+
 
     
 }
