@@ -201,14 +201,14 @@
             </div>
 
             <!-- Modal Footer -->
-            <div class="sticky bottom-0 flex justify-end gap-4 rounded-b-md border-t-2 border-gray-200 bg-white p-4">
+            {{-- <div class="sticky bottom-0 flex justify-end gap-4 rounded-b-md border-t-2 border-gray-200 bg-white p-4">
                 <button onclick="toggleModal('checkoutModal')" class="rounded bg-gray-300 px-4 py-2 hover:bg-gray-400">
                     Cancel
                 </button>
                 <button onclick="confirmCheckout()" class="rounded bg-green-500 px-4 py-2 text-white hover:bg-green-600">
                     Confirm
                 </button>
-            </div>
+            </div> --}}
         </div>
     </div>
 

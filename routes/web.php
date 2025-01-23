@@ -101,7 +101,9 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/create-invoice', [InvoiceController::class, 'createInvoiceAdmin'])->name('create-invoice-admin');
     Route::get('/admin/edit-invoice/{invoice}', [InvoiceController::class, 'editInvoiceAdmin'])->name('edit-invoice-admin');
     Route::post('update-invoice/{invoice}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
-    
+    Route::delete('/admin/delete-invoice/{invoice}', [InvoiceController::class, 'deleteInvoiceAdmin'])->name('delete-invoice-admin');
+
+
     Route::get('/admin/create-invoice-manual', [InvoiceController::class, 'createInvoiceAdminManual'])->name('create-invoice-admin-manual');
     Route::post('/admin/store-invoice-manual', [InvoiceController::class, 'storeInvoiceAdminManual'])->name('store-invoice-admin-manual');
     Route::post('update-invoice-manual/{invoice}', [InvoiceController::class, 'updateInvoiceManual'])->name('update-invoice-manual');
@@ -120,7 +122,7 @@ Route::get('doku-test', [DokuController::class, 'calculateDokuNetto']);
 
 
 
-Route::get('faspay-initiate', [FasPayController::class, 'initiateKredivo']);
+Route::get('faspay-initiate', [FasPayController::class, 'initiate']);
 Route::post('/api/faspay-callback', [FasPayController::class, 'callback'])->name('faspay-callback');
 
 require __DIR__.'/auth.php';

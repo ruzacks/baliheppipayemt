@@ -54,6 +54,30 @@ class InvoiceController extends Controller
         }
     }
 
+    public function deleteInvoiceAdmin(Invoice $invoice)
+    {
+        try {
+            // Check if the invoice has related details
+            if ($invoice->invoice_detail()->exists()) {
+                // Delete all related invoice details
+                $invoice->invoice_detail()->delete();
+            }
+
+            // Delete the invoice
+            $invoice->delete();
+
+            // Redirect back with a success message
+            return redirect()->back()->with('success', 'Invoice deleted successfully!');
+        } catch (\Exception $e) {
+            // Log the exception and handle errors
+            \Log::error('Error deleting invoice: ' . $e->getMessage());
+
+            // Redirect back with an error message
+            return redirect()->back()->with('error', 'Failed to delete invoice. Please try again later.');
+        }
+    }
+
+
     public function getDetail(Request $request)
     {
         // // Validate the request input

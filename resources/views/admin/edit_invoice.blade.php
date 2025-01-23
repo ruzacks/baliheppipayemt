@@ -198,6 +198,38 @@
             </div>
         </div>
 
+        <div id="successModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
+                <!-- Close Button (Top-Right) -->
+                <button 
+                    id="closeSuccessModal" 
+                    class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                    aria-label="Close modal"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+        
+                <!-- Modal Content -->
+                <h2 class="text-lg font-semibold text-gray-800 mb-4" id="modalMessage"></h2>
+                <div class="flex items-center gap-4">
+                    <input 
+                        type="text" 
+                        id="modalInvoiceCode" 
+                        readonly 
+                        class="w-full px-3 py-2 border border-gray-300 rounded-md text-gray-800"
+                    />
+                    <button 
+                        id="copyButton" 
+                        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring focus:ring-blue-300"
+                    >
+                        Copy
+                    </button>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -543,16 +575,8 @@
                 if (response.ok) {
                     const result = await response.json();
                     if (result.status === "success") {
-                        Swal.fire({
-                            icon: result.status,
-                            title: result.status,
-                            text: result.message,
-                            showConfirmButton: false,
-                            timer: 2000
-                        }).then(() => {
-                            // Redirect after the modal closes
-                            window.location.href = "{{ route('admin-panel') }}";
-                        });
+                        closeConfirmationModal();
+                        openSuccessModal(result.message, result.invoice_code);
                     } else {
                         Swal.fire({
                             icon: result.status,
@@ -568,6 +592,41 @@
             } catch (error) {
                 alert('An error occurred. Please try again later.');
             }
+        }
+
+        function openSuccessModal(message, invoiceCode) {
+            const modal = document.getElementById('successModal');
+            const modalMessage = document.getElementById('modalMessage');
+            const modalInvoiceCode = document.getElementById('modalInvoiceCode');
+
+            // Set the message and invoice code
+            modalMessage.textContent = message;
+            modalInvoiceCode.value = "https://linkbayar.my.id/?inv_code=" + invoiceCode;
+
+            // Show the modal
+            modal.classList.remove('hidden');
+
+            // Add event listener for the copy button
+            document.getElementById('copyButton').addEventListener('click', () => {
+                modalInvoiceCode.select();
+                document.execCommand('copy');
+
+                // Show SweetAlert toast
+                Swal.fire({
+                    toast: true,
+                    icon: 'success',
+                    title: 'Copied',
+                    position: 'bottom',
+                    showConfirmButton: false,
+                    timer: 1500,
+                });
+            });
+
+            // Close the modal
+            document.getElementById('closeSuccessModal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                window.location.href = "{{ route('admin-panel') }}";
+            });
         }
     </script>
 @endsection
