@@ -86,7 +86,7 @@ class InvoiceController extends Controller
         // ]);
 
         // Find the invoice by code
-        $invoice = Invoice::where('invoice_code', $request->inv_code)->first();
+        $invoice = Invoice::where('invoice_code','like', '%'.$request->inv_code.'%')->first();
 
         if ($invoice) {
 

@@ -279,13 +279,13 @@
 
                 // Get the product ID from the row's ID or another attribute
                 const productId = parseInt(row.id.replace("product-row-", ""));
-
+               
                 if (!isNaN(qty) && qty > 0) {
                     const total = qty * price;
                     totalElem.textContent = formatNumber(total);
 
                     // Update the qty in productsInCart
-                    const product = productsInCart.find((p) => p.id === productId);
+                    const product = productsInCart.find((p) => parseInt(p.id) === productId);
                     if (product) {
                         product.qty = qty;
                     }
