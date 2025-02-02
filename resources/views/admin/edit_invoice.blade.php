@@ -110,7 +110,7 @@
                                 Gateway</label>
                             <input type="text" id="netto" name="netto"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500"
-                                value="{{ $invoice->netto }}" autocomplete="off" oninput="formatInputNumber(this)">
+                                value="{{ number_format($invoice->netto, 0) }}" autocomplete="off" oninput="formatInputNumber(this)">
                         </div>
                         <div class="mb-4">
                             <label for="tax" class="block text-sm font-medium text-gray-700 mb-1">Adm / Tax (%)</label>
