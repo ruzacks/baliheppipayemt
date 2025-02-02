@@ -141,8 +141,9 @@ class DokuController extends Controller
             $fee = FeeSetting::where('method_name', strtolower($result->acquirer->id))->first();
 
             // If FeeSetting for acquirer id doesn't exist, use the channel id
+            strtolower($result->channel->id) === 'credit_card' ? $methodName = 'Kartu Kredit' : $methodName = $result->channel->id;
             if (!$fee) {
-                $fee = FeeSetting::where('method_name', strtolower($result->channel->id))->first();
+                $fee = FeeSetting::where('method_name', strtolower($methodName))->first();
             }
 
             // Assuming $fee exists at this point, set tax and fee
@@ -628,8 +629,8 @@ class DokuController extends Controller
             $percentage = $feeJson->percentage->paylater->$aquirer ?? 0;
             $additional = $feeJson->additional_fee->paylater->$aquirer ?? 0;
         } elseif ($channel === 'credit_card') {
-            $percentage = $feeJson->percentage->visa_mc_jcb ?? 0;
-            $additional = $feeJson->additional_fee->visa_mc_jcb ?? 0;
+            $percentage = $feeJson->percentage->credit_card->visa_mc_jcb ?? 0;
+            $additional = $feeJson->additional_fee->credit_card->visa_mc_jcb ?? 0;
         }
 
         // Calculate fee and taxes
