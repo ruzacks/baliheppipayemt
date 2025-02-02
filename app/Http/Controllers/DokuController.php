@@ -155,18 +155,18 @@ class DokuController extends Controller
             // Save the invoice
             $invoice->save();
 
-            return redirect()->to('http://127.0.0.1/linkbayar/success.php');
+            return redirect()->to('https://linkbayar.my.id/success.php');
         } else if ($result->transaction->status == "PENDING") {
             $invoice->payment_by = $result->acquirer->id;
             $invoice->api_status = $response;
             $invoice->status = 'pending';
             $invoice->save();
-            return redirect()->to("http://127.0.0.1/linkbayar/pending.php?inv_code=$invoice->invoice_code");
+            return redirect()->to("https://linkbayar.my.id/pending.php?inv_code=$invoice->invoice_code");
         } else {
             $invoice->payment_by = $result->acquirer->id;
             $invoice->api_status = $response;
             $invoice->save();
-            return redirect()->to('http://127.0.0.1/linkbayar/failed.php');
+            return redirect()->to('https://linkbayar.my.id/failed.php');
         }
     }
 
