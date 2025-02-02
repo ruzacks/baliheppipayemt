@@ -638,7 +638,8 @@ class DokuController extends Controller
         $taxes = $fee * 0.11; // 11% tax
 
         // Calculate netto
-        $netto = $amount - $fee - $taxes;
+        //$netto = $amount - $fee - $taxes;
+        $netto = $amount - $fee;
 
         return $netto;
     }
