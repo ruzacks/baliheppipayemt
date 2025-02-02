@@ -230,6 +230,25 @@
             </div>
         </div>
 
+        <div id="updateModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+            <div class="bg-white rounded-lg shadow-lg p-6 max-w-md w-full relative">
+                <!-- Close Button (Top-Right) -->
+                <button 
+                    id="closeUpdateModal" 
+                    class="absolute top-2 right-2 text-gray-400 hover:text-gray-600 focus:outline-none"
+                    aria-label="Close modal"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+        
+                <!-- Modal Content -->
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">Invoice updated successfully.</h2>
+               
+            </div>
+        </div>
+
     </div>
 
     <script>
@@ -555,7 +574,7 @@
             const expireDate = document.getElementById('expire_date').value;
             const tax = taxInput.value;
             const fee = feeInput.value;
-            const netto = nettoInput.value;
+            const netto = nettoInput.value.replace(/[^0-9.]/g, '');
             const commission = salesCommissionInput.value;
             const paymentBy = paymentByInput.value;
 
@@ -604,7 +623,15 @@
         }
 
         function openSuccessModal(message, invoiceCode) {
-            const modal = document.getElementById('successModal');
+            const nettoInput = document.getElementById("netto");
+            const netto = parseInt(nettoInput.value.replace(/[^0-9]/g, ''));
+            console.log(netto);
+            let modal;
+            if(netto > 0){
+                modal = document.getElementById('updateModal');
+            } else {
+                modal = document.getElementById('successModal');
+            }
             const modalMessage = document.getElementById('modalMessage');
             const modalInvoiceCode = document.getElementById('modalInvoiceCode');
 
@@ -633,6 +660,11 @@
 
             // Close the modal
             document.getElementById('closeSuccessModal').addEventListener('click', () => {
+                modal.classList.add('hidden');
+                window.location.href = "{{ route('admin-panel') }}";
+            });
+
+            document.getElementById('closeUpdateModal').addEventListener('click', () => {
                 modal.classList.add('hidden');
                 window.location.href = "{{ route('admin-panel') }}";
             });
