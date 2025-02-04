@@ -25,10 +25,11 @@
                     {{ \Carbon\Carbon::now()->format('F Y') }}
                 </div>
             </div>
-        
+
             <div class="relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800">
                 <div class="space-y-2">
-                    <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <div
+                        class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
                         <span>Count Transaction</span>
                     </div>
                     <div class="text-3xl dark:text-gray-100">
@@ -36,10 +37,11 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800">
                 <div class="space-y-2">
-                    <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <div
+                        class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
                         <span>Sum Transaction</span>
                     </div>
                     <div class="text-3xl dark:text-gray-100">
@@ -47,10 +49,11 @@
                     </div>
                 </div>
             </div>
-        
+
             <div class="relative p-6 rounded-2xl bg-white shadow dark:bg-gray-800">
                 <div class="space-y-2">
-                    <div class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
+                    <div
+                        class="flex items-center space-x-2 rtl:space-x-reverse text-sm font-medium text-gray-500 dark:text-gray-400">
                         <span>Sum of Profit</span>
                     </div>
                     <div class="text-3xl dark:text-gray-100">
@@ -59,7 +62,7 @@
                 </div>
             </div>
         </div>
-        
+
 
         <div class="w-full overflow-hidden rounded-lg border border-stone-200">
             <!-- Filter Form -->
@@ -185,28 +188,30 @@
                                 <a href="{{ route('edit-invoice-admin', ['invoice' => $invoice->id]) }}">
                                     <button
                                         class="inline-grid place-items-center border rounded-md bg-transparent text-stone-800 hover:bg-stone-200/10">
-                                        <svg width="1.5em" height="1.5em" viewBox="0 0 24 24" stroke-width="1.5" fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
+                                        <svg width="1.5em" height="1.5em" viewBox="0 0 24 24" stroke-width="1.5"
+                                            fill="none" xmlns="http://www.w3.org/2000/svg" color="currentColor">
                                             <path
                                                 d="M14.3632 5.65156L15.8431 4.17157C16.6242 3.39052 17.8905 3.39052 18.6716 4.17157L20.0858 5.58579C20.8668
-                                                6.36683 20.8668 7.63316 20.0858 8.41421L18.6058 9.8942M14.3632 5.65156L4.74749 15.2672C4.41542 15.5993 4.21079
-                                                16.0376 4.16947 16.5054L3.92738 19.2459C3.87261 19.8659 4.39148 20.3848 5.0115 20.33L7.75191 20.0879C8.21972
-                                                20.0466 8.65806 19.8419 8.99013 19.5099L18.6058 9.8942M14.3632 5.65156L18.6058 9.8942"
+                                                    6.36683 20.8668 7.63316 20.0858 8.41421L18.6058 9.8942M14.3632 5.65156L4.74749 15.2672C4.41542 15.5993 4.21079
+                                                    16.0376 4.16947 16.5054L3.92738 19.2459C3.87261 19.8659 4.39148 20.3848 5.0115 20.33L7.75191 20.0879C8.21972
+                                                    20.0466 8.65806 19.8419 8.99013 19.5099L18.6058 9.8942M14.3632 5.65156L18.6058 9.8942"
                                                 stroke="currentColor" stroke-linecap="round" stroke-linejoin="round">
                                             </path>
                                         </svg>
                                     </button>
                                 </a>
-                            
+
                                 <!-- Delete Button -->
-                                <form id="deleteForm-{{ $invoice->id }}" method="POST" action="{{ route('delete-invoice-admin', ['invoice' => $invoice->id]) }}">
+                                <form id="deleteForm-{{ $invoice->id }}" method="POST"
+                                    action="{{ route('delete-invoice-admin', ['invoice' => $invoice->id]) }}">
                                     @csrf
                                     @method('DELETE')
-                                    <button 
-                                        type="button" 
+                                    <button type="button"
                                         class="inline-grid place-items-center border rounded-md bg-transparent text-red-600 hover:bg-red-200/10"
-                                        onclick="openDeleteModal('{{ $invoice->invoice_code }}','{{ $invoice->id }}')"
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        onclick="openDeleteModal('{{ $invoice->invoice_code }}','{{ $invoice->id }}')">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="1.5em" height="1.5em"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                                            stroke-linecap="round" stroke-linejoin="round">
                                             <polyline points="3 6 5 6 21 6"></polyline>
                                             <path d="M19 6l-2 14H7L5 6"></path>
                                             <path d="M10 11v6"></path>
@@ -215,7 +220,7 @@
                                     </button>
                                 </form>
                             </td>
-                            
+
                         </tr>
                     @endforeach
                 </tbody>
@@ -233,19 +238,14 @@
         <div id="deleteModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
             <div class="bg-white rounded-lg shadow-lg p-6 max-w-sm w-full">
                 <h2 class="text-lg font-semibold text-gray-800 mb-4">Confirm Deletion</h2>
-                <p class="text-gray-600 mb-6">Are you sure you want to delete invoice <span id="invoiceToDelete"></span>? </p>
+                <p class="text-gray-600 mb-6">Are you sure you want to delete invoice <span id="invoiceToDelete"></span>?
+                </p>
                 <div class="flex items-center justify-end gap-4">
                     <input type="hidden" id="invoiceIdToDelete">
-                    <button 
-                        id="cancelDelete" 
-                        class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300"
-                    >
+                    <button id="cancelDelete" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
                         Cancel
                     </button>
-                    <button 
-                        id="confirmDelete" 
-                        class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700"
-                    >
+                    <button id="confirmDelete" class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700">
                         Delete
                     </button>
                 </div>
@@ -253,6 +253,58 @@
         </div>
 
         <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                // Select all rows in the table body
+                const rows = document.querySelectorAll("table tbody tr");
+
+                // Initialize an array to store the invoice numbers and their statuses
+                const invoiceList = [];
+                let checkCount = 0;
+                let successFound = false;
+
+                // Loop through each row
+                rows.forEach(row => {
+                    // Get the invoice number from the second cell (index 1)
+                    const invoiceNumber = row.querySelector("td:nth-child(2) small").textContent.trim();
+
+                    // Get the status from the second last cell
+                    const status = row.querySelector("td:nth-last-child(2) span").textContent.trim();
+
+                    // Add the invoice number and status to the array
+                    invoiceList.push({
+                        invoiceNumber,
+                        status
+                    });
+
+                    // If the status is 'unpaid', make a request to checkInvoice function in DokuController
+                    if (status.toLowerCase() === 'unpaid') {
+                        fetch("{{ route('check-invoice') }}" + `?inv_code=${invoiceNumber}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                checkCount++;
+                                if (data.status === 'success') {
+                                    successFound = true;
+                                }
+                                console.log(`Invoice ${invoiceNumber} status checked:`, data);
+                                if (checkCount === rows.length && successFound) {
+                                    location.reload();
+                                }
+                            })
+                            .catch(error => {
+                                checkCount++;
+                                console.error(`Error checking invoice ${invoiceNumber}:`, error);
+                                if (checkCount === rows.length && successFound) {
+                                    location.reload();
+                                }
+                            });
+                    } else {
+                        checkCount++;
+                    }
+                });
+
+                // Output the list of invoice numbers and their statuses
+                console.log(invoiceList);
+            });
             // Function to format numbers with commas
             function formatWithCommas(value) {
                 // Remove any non-numeric characters (except the decimal point)
@@ -285,7 +337,7 @@
             // Add event listeners for confirm and cancel buttons
             document.getElementById('cancelDelete').addEventListener('click', () => {
                 const deleteModal = document.getElementById('deleteModal');
-                
+
                 deleteModal.classList.add('hidden');
             });
 
@@ -294,6 +346,5 @@
                 const invoiceIdToDelete = document.getElementById('invoiceIdToDelete');
                 document.getElementById('deleteForm-' + invoiceIdToDelete.value).submit();
             });
-
         </script>
     @endsection

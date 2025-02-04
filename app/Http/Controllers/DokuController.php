@@ -643,4 +643,73 @@ class DokuController extends Controller
 
         return $netto;
     }
+
+    public function checkInvoice(Request $request)
+    {
+        $invoice = Invoice::where('invoice_code', $request->inv_code)->first();
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $endpoint = "/orders/v1/status/$request->inv_code";
+
+        $requestAtt = $this->getRequestIdAndTimestamp();
+
+        $signature = $this->getSignature($endpoint, null, $requestAtt, $apiService);
+
+        $headers = $this->getHeader($signature, $requestAtt, $apiService);
+
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $apiService->attribute['base_url'] . $endpoint);
+        curl_setopt($ch, CURLOPT_POST, false);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+
+        $response = curl_exec($ch);
+        $error = curl_error($ch);
+        curl_close($ch);
+
+        if ($error) {
+            return response()->json(['error' => $error], 500);
+        }
+
+        $result = json_decode($response);
+
+        if (isset($result->error) && $result->error->code === "data_not_found") {
+            return response()->json(['error' => $result->error->message], 404);
+        }
+
+        if ($result->transaction->status == "SUCCESS") {
+            $invoice->status = "paid";
+            $invoice->payment_by = $result->acquirer->id;
+            $invoice->netto = $this->calculateDokuNetto($result->acquirer->id, $result->order->amount, $result->channel->id);
+            $invoice->api_status = $response;
+
+            $fee = FeeSetting::where('method_name', strtolower($result->acquirer->id))->first();
+            strtolower($result->channel->id) === 'credit_card' ? $methodName = 'Kartu Kredit' : $methodName = $result->channel->id;
+            if (!$fee) {
+            $fee = FeeSetting::where('method_name', strtolower($methodName))->first();
+            }
+
+            if ($fee) {
+            $invoice->tax = $fee->tax_percentage;
+            $invoice->fee = $fee->rajagestun_fee;
+            }
+
+            $invoice->save();
+
+            return response()->json(['status' => 'success', 'invoice' => $invoice], 200);
+        } else if ($result->transaction->status == "PENDING") {
+            $invoice->payment_by = $result->acquirer->id;
+            $invoice->api_status = $response;
+            $invoice->status = 'pending';
+            $invoice->save();
+
+            return response()->json(['status' => 'pending', 'invoice' => $invoice], 200);
+        } else {
+            $invoice->payment_by = $result->acquirer->id;
+            $invoice->api_status = $response;
+            $invoice->save();
+
+            return response()->json(['status' => 'failed', 'invoice' => $invoice], 200);
+        }
+    }
 }

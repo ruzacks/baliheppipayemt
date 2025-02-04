@@ -108,6 +108,8 @@ Route::middleware('auth')->group(function () {
     Route::post('/admin/store-invoice-manual', [InvoiceController::class, 'storeInvoiceAdminManual'])->name('store-invoice-admin-manual');
     Route::post('update-invoice-manual/{invoice}', [InvoiceController::class, 'updateInvoiceManual'])->name('update-invoice-manual');
 
+    Route::get('/admin/check-invoice', [DokuController::class, 'checkInvoice'])->name('check-invoice');
+
 });
 
 Route::get('/', [ProductController::class, 'productList'])->name('product-list');
