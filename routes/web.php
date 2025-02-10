@@ -22,7 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 
 Route::middleware(DisableCors::class)->group(function () {
-    Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail']);
+    Route::post('api/get-invoice-detail', [InvoiceController::class, 'getDetail'])->name('get-invoice-detail');
     Route::post('api/request-qr-payment', [IpaymuController::class, 'initiateQRPayment']);
     Route::get('api/check-payment', [DokuController::class, 'getTransactionStatus']);
     Route::get('api/get-trans-method', [FeeSettingController::class, 'getTransMethod']);
@@ -127,4 +127,6 @@ Route::get('doku-test', [DokuController::class, 'calculateDokuNetto']);
 Route::get('faspay-initiate', [FasPayController::class, 'initiate']);
 Route::post('/api/faspay-callback', [FasPayController::class, 'callback'])->name('faspay-callback');
 
+
+Route::get('checkout', [InvoiceController::class, 'checkout'])->name('checkout');
 require __DIR__.'/auth.php';

@@ -59,8 +59,18 @@
             <!--   ✅ Product card 1 - Starts Here 👇 -->
             <div class="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl">
                 <a href="{{ route('product-single', $product->id) }}">
+                    @if($product->image_url)
+                        @if(filter_var($product->image_url, FILTER_VALIDATE_URL))
+                            <!-- If image_url is a full URL -->
+                            <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-80 w-72 object-cover rounded-t-xl">
+                        @else
+                            <!-- If image_url is a file path -->
+                            <img src="{{ asset('storage/app/public/' . $product->image_url) }}" alt="{{ $product->name }}" class="h-80 w-72 object-cover rounded-t-xl">
+                        @endif
+                    @else
                     <img src="https://www.static-src.com/wcsstore/Indraprastha/images/catalog/full//catalog-image/100/MTA-150688314/no-brand_no-brand_full01.jpg"
-                        alt="Product" class="h-80 w-72 object-cover rounded-t-xl" />
+                    alt="Product" class="h-80 w-72 object-cover rounded-t-xl" />
+                    @endif
                 </a>
                 <div class="px-4 py-3 w-72">
                     {{-- <span class="text-gray-400 mr-3 uppercase text-xs">Brand</span> --}}
@@ -99,7 +109,7 @@
             <div id="cartItems" class="mt-4"></div>
             <div class="mt-6 text-right">
                 <button onclick="toggleModal('cartModal')" class="mr-2 rounded bg-gray-300 px-4 py-2">Close</button>
-                <button onclick="toggleModal('checkoutModal')"
+                <button onclick="toggleModal('custDataModal')"
                     class="rounded bg-blue-500 px-4 py-2 text-white">Checkout</button>
             </div>
         </div>
@@ -209,6 +219,84 @@
                     Confirm
                 </button>
             </div> --}}
+        </div>
+    </div>
+
+    <div id="custDataModal" class="fixed inset-0 z-50 hidden h-full w-full overflow-y-auto bg-gray-900 bg-opacity-50">
+        <div class="relative mx-auto mt-24 w-11/12 max-w-2xl rounded-lg bg-white shadow-lg">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between rounded-t-lg border-b border-gray-200 bg-gray-50 p-6">
+                <h5 class="text-xl font-semibold text-gray-800">
+                    Shipping Address
+                </h5>
+                <button type="button" class="text-gray-500 hover:text-gray-800" onclick="toggleModal('custDataModal')">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                        stroke="currentColor" class="h-6 w-6">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+    
+            <!-- Modal Body -->
+            <div class="max-h-[60vh] overflow-y-auto p-6">
+                <form id="customerDataForm" class="space-y-6">
+                    <!-- Grid Layout for Nama Depan and Nama Belakang -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="first_name" class="block text-sm font-medium text-gray-700">Nama Depan</label>
+                            <input type="text" id="first_name" name="first_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                        <div>
+                            <label for="last_name" class="block text-sm font-medium text-gray-700">Nama Belakang</label>
+                            <input type="text" id="last_name" name="last_name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                    </div>
+    
+                    <!-- Email and Nomor Telepon -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                            <input type="email" id="email" name="email" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                        <div>
+                            <label for="phone" class="block text-sm font-medium text-gray-700">Nomor Telepon</label>
+                            <input type="text" id="phone" name="phone" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                    </div>
+    
+                    <!-- Alamat -->
+                    <div>
+                        <label for="address" class="block text-sm font-medium text-gray-700">Alamat</label>
+                        <textarea id="address" name="address" rows="3" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm p-4"></textarea>
+                    </div>
+    
+                    <!-- Kota, Provinsi, and Kode Pos -->
+                    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
+                        <div>
+                            <label for="city" class="block text-sm font-medium text-gray-700">Kota</label>
+                            <input type="text" id="city" name="city" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                        <div>
+                            <label for="state" class="block text-sm font-medium text-gray-700">Provinsi</label>
+                            <input type="text" id="state" name="state" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                        <div>
+                            <label for="postcode" class="block text-sm font-medium text-gray-700">Kode Pos</label>
+                            <input type="text" id="postcode" name="postcode" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 sm:text-sm h-10 px-4" required>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        
+            <!-- Modal Footer -->
+            <div class="sticky bottom-0 flex justify-end gap-4 rounded-b-lg border-t border-gray-200 bg-gray-50 p-6">
+                <button onclick="toggleModal('custDataModal')" class="rounded-md bg-gray-300 px-5 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-400">
+                    Batal
+                </button>
+                <button onclick="confirmCheckout()" class="rounded-md bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white hover:bg-indigo-700">
+                    Konfirmasi
+                </button>
+            </div>
         </div>
     </div>
 
@@ -389,42 +477,47 @@
         }
 
         async function confirmCheckout() {
-            // const name = document.getElementById('name').value;
-            // const address = document.getElementById('address').value;
-            // const phone = document.getElementById('phone').value;
+            const form = document.getElementById('customerDataForm');
+            const formData = new FormData(form);
+            const data = {};
 
-            // if (!name || !address || !phone) {
-            //     alert('Please fill in all fields.');
-            //     return;
-            // }
+            formData.forEach((value, key) => {
+            data[key] = value;
+            });
+
+            // Check if all required fields are filled
+            const requiredFields = ['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'postcode'];
+            for (const field of requiredFields) {
+            if (!data[field]) {
+                alert('Please fill in all fields.');
+                return;
+            }
+            }
 
             try {
-                const response = await fetch("{{ route('create-invoice') }}", {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                    },
-                    body: JSON.stringify({
-                        // name,
-                        // address,
-                        // phone,
-                        cart
-                    })
-                });
+            const response = await fetch("{{ route('create-invoice') }}", {
+                method: 'POST',
+                headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: JSON.stringify({
+                ...data,
+                cart
+                })
+            });
 
-                if (response.ok) {
-                    const result = await response.json();
-                    cart = [];
-                    updateCartDisplay();
-                    toggleModal('checkoutModal');
-                    document.getElementById('invoiceCode').innerText = result.invoice_code;
-                    toggleModal('invoiceModal');
-                } else {
-                    alert('Failed to create invoice. Please try again.');
-                }
+            if (response.ok) {
+                const result = await response.json();
+                cart = [];
+                // updateCartDisplay();
+                // toggleModal('custDataModal');
+                window.location.href = `{{ route('checkout') }}?invoice_code=${result.invoice_code}&customer_code=${result.customer_code}`;
+            } else {
+                alert('Failed to create invoice. Please try again.');
+            }
             } catch (error) {
-                alert('An error occurred. Please try again later.');
+            alert('An error occurred. Please try again later.');
             }
         }
 

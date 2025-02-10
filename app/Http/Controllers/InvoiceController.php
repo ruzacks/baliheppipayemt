@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceDetail;
 use App\Models\SalesPerson;
@@ -160,6 +161,24 @@ class InvoiceController extends Controller
 
     public function createInvoice(Request $request) 
     {
+        // Extract customer data from the request
+        $custData = $request->only(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'postcode']);
+
+        // Create or update the customer and return the customer code in the response
+        $customer = Customer::firstOrCreate(
+            ['email' => $custData['email']],
+            [
+            'first_name' => $custData['first_name'],
+            'last_name' => $custData['last_name'],
+            'phone' => $custData['phone'],
+            'address' => $custData['address'],
+            'city' => $custData['city'],
+            'state' => $custData['state'],
+            'postcode' => $custData['postcode'],
+            'customer_code' => 'CUST-' . uniqid(), // Generate a unique customer code
+            ]
+        );
+        
         // Check if 'cart' or 'productsInCart' exists in the request
         if (!$request->has('cart') && !$request->has('productsInCart')) {
             return response()->json([
@@ -193,7 +212,7 @@ class InvoiceController extends Controller
         $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
         $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
         $salesPersonId = $request->salesId ? $request->salesId : null;
-        $expireDate = $request->expireDate ? now()->addMinutes(intval($request->expireDate)) : null;
+        $expireDate = now()->addMinutes(60);
 
         $salesData = SalesPerson::where('id', $salesPersonId)->first();
 
@@ -225,7 +244,8 @@ class InvoiceController extends Controller
         return response()->json([
             'status' => 'success',
             'message' => 'Invoice created successfully.',
-            'invoice_code' => $invoiceCode
+            'invoice_code' => $invoiceCode,
+            'customer_code' => $customer->customer_code
         ]);
     }
 
@@ -317,6 +337,15 @@ class InvoiceController extends Controller
         ]); 
     }
 
+    public function checkout(Request $request)
+    {
+        
+        // Find the invoice by code
+        $invoice = Invoice::where('invoice_code', $request->invoice_code)->first();
 
+        $customer = Customer::where('customer_code', $request->customer_code)->first();
+
+        return view('page.linkbayar', compact('invoice', 'customer'));
+    }
     
 }

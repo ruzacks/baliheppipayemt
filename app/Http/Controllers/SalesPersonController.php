@@ -58,7 +58,7 @@ class SalesPersonController extends Controller
     // Show the form for editing the specified resource
     public function edit(SalesPerson $salesPerson)
     {
-        return view('sales_persons.edit', compact('salesPerons')); // Pass the specific fee setting to the edit view
+        return view('sales_persons.edit', compact('salesPerson')); // Pass the specific fee setting to the edit view
     }
 
     // Update the specified resource in storage

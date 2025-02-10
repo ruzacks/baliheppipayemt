@@ -28,9 +28,15 @@
                     <td class="px-4 py-3">{{ $product->name }}</td>
                     <td class="px-4 py-3">
                         @if($product->image_url)
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-10 w-10 rounded-lg">
+                            @if(filter_var($product->image_url, FILTER_VALIDATE_URL))
+                                <!-- If image_url is a full URL -->
+                                <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="h-10 w-10 rounded-lg">
+                            @else
+                                <!-- If image_url is a file path -->
+                                <img src="{{ asset('storage/app/public/' . $product->image_url) }}" alt="{{ $product->name }}" class="h-10 w-10 rounded-lg">
+                            @endif
                         @else
-                        <span class="text-gray-500">No image</span>
+                            <span class="text-gray-500">No image</span>
                         @endif
                     </td>
                     <td class="px-4 py-3">Rp. {{ number_format($product->price, 0) }}</td>
