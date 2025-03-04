@@ -6,6 +6,7 @@ use App\Models\ApiService;
 use App\Models\Customer;
 use App\Models\FeeSetting;
 use App\Models\Invoice;
+use App\Models\Product;
 use Illuminate\Http\Request;
 
 class DokuController extends Controller
@@ -510,12 +511,13 @@ class DokuController extends Controller
 
         // Map invoice details into line items
         $lineItems = $invoice->invoice_detail->map(function ($detail) {
+            $sku = Product::find($detail->product_id)->sku;
             return [
-                "name" => $detail->product_name,
-                "price" => $detail->price,
-                "quantity" => $detail->qty,
-                "sku" => "kerupuk-kulit",
-                "category" => "food"
+            "name" => $detail->product_name,
+            "price" => $detail->price,
+            "quantity" => $detail->qty,
+            "sku" => $sku,
+            "category" => "food"
             ];
         })->toArray();
 
@@ -711,5 +713,54 @@ class DokuController extends Controller
 
             return response()->json(['status' => 'failed', 'invoice' => $invoice], 200);
         }
+    }
+
+    public function getB2BToken()
+    {
+        $apiService = ApiService::where('name', 'Doku')->firstOrFail();
+
+        $apiKey = $apiService->attribute['api_key'];
+        $clientId = $apiService->attribute['client_id'];
+        $baseUrl = $apiService->attribute['base_url'];
+        $clientKey = $apiService->attribute['public_key'];
+
+        $timestamp = gmdate('Y-m-d\TH:i:s\Z');
+        $stringToSign = $clientId . '|' . $timestamp;
+
+        // Generate Signature
+        $signature = base64_encode(hash_hmac('sha256', $stringToSign, $apiKey, true));
+
+
+        // Request Body
+        $body = json_encode([
+            "grantType" => "client_credentials",
+            'additionalInfo' => [],
+        ]);
+
+        // Request Headers
+        $headers = [
+            "X-SIGNATURE: $signature",
+            "X-TIMESTAMP: $timestamp",
+            "X-CLIENT-KEY: $clientId",
+            "Content-Type: application/json"
+        ];
+
+        // cURL Request
+        $endpoint = "/authorization/v1/access-token/b2b";
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $baseUrl . $endpoint);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, $body);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+
+        $response = curl_exec($ch);
+        $httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+        curl_close($ch);
+
+        return response()->json([
+            'status' => $httpCode,
+            'response' => json_decode($response, true),
+        ]);
     }
 }

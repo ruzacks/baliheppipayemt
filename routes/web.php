@@ -102,6 +102,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/admin/edit-invoice/{invoice}', [InvoiceController::class, 'editInvoiceAdmin'])->name('edit-invoice-admin');
     Route::post('update-invoice/{invoice}', [InvoiceController::class, 'updateInvoice'])->name('update-invoice');
     Route::delete('/admin/delete-invoice/{invoice}', [InvoiceController::class, 'deleteInvoiceAdmin'])->name('delete-invoice-admin');
+    Route::get('/admin/set-paid/{invoice}', [InvoiceController::class, 'makePaid'])->name('make-invoice-paid');
 
 
     Route::get('/admin/create-invoice-manual', [InvoiceController::class, 'createInvoiceAdminManual'])->name('create-invoice-admin-manual');
@@ -120,7 +121,7 @@ Route::get('initiate', [IpaymuController::class, 'initiate']);
 
 Route::get('doku-initiate', [DokuController::class, 'initiateIndodana']);
 Route::get('doku-trans-status', [DokuController::class, 'getTransactionStatus'])->name('doku-callback');
-Route::get('doku-test', [DokuController::class, 'calculateDokuNetto']);
+Route::get('doku-test', [DokuController::class, 'getB2BToken']);
 
 
 

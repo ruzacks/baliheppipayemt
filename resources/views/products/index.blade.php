@@ -19,6 +19,7 @@
                     <th class="px-4 py-2">Name</th>
                     <th class="px-4 py-2">Image</th>
                     <th class="px-4 py-2">Price</th>
+                    <th class="px-4 py-2">SKU</th>
                     <th class="px-4 py-2 text-right">Actions</th>
                 </tr>
             </thead>
@@ -40,6 +41,7 @@
                         @endif
                     </td>
                     <td class="px-4 py-3">Rp. {{ number_format($product->price, 0) }}</td>
+                    <td>{{ $product->sku }}</td>
                     <td class="px-4 py-3 text-right">
                         <a
                             href="{{ route('products.edit', $product) }}"

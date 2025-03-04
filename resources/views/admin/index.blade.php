@@ -184,6 +184,16 @@
                                 </div>
                             </td>
                             <td class="px-4 py-2 border-b border-surface-light flex items-center gap-2">
+                                <!-- Dollar Icon (Mark as Paid) -->
+                                <a href="{{ route('make-invoice-paid', ['invoice' => $invoice->id]) }}"
+                                    class="inline-grid place-items-center border rounded-md bg-transparent text-green-600 hover:bg-green-200/10">
+                                    <svg width="1.5em" height="1.5em" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M12 2V22" />
+                                        <path d="M16 6.5C16 4.5 14.5 3 12 3C9.5 3 8 4.5 8 6.5C8 8.5 9.5 9.5 12 10.5C14.5 11.5 16 12.5 16 14.5C16 16.5 14.5 18 12 18C9.5 18 8 16.5 8 14.5" />
+                                    </svg>
+                                    
+                                </a>
+
                                 <!-- Edit Button -->
                                 <a href="{{ route('edit-invoice-admin', ['invoice' => $invoice->id]) }}">
                                     <button

@@ -131,10 +131,10 @@ class InvoiceController extends Controller
 
     public function storeInvoiceAdminManual(Request $request)
     {
-        $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
-        $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
-        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
+        do {
+            $randomNumber = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
+            $invoiceCode = 'INV-' . $randomNumber;
+        } while (Invoice::where('invoice_code', $invoiceCode)->exists());
 
         $invoice = Invoice::create([
             'invoice_code' => $invoiceCode,
@@ -165,19 +165,25 @@ class InvoiceController extends Controller
         $custData = $request->only(['first_name', 'last_name', 'email', 'phone', 'address', 'city', 'state', 'postcode']);
 
         // Create or update the customer and return the customer code in the response
-        $customer = Customer::firstOrCreate(
-            ['email' => $custData['email']],
-            [
-            'first_name' => $custData['first_name'],
-            'last_name' => $custData['last_name'],
-            'phone' => $custData['phone'],
-            'address' => $custData['address'],
-            'city' => $custData['city'],
-            'state' => $custData['state'],
-            'postcode' => $custData['postcode'],
-            'customer_code' => 'CUST-' . uniqid(), // Generate a unique customer code
-            ]
-        );
+        if (!empty(array_filter($custData))) {
+            $customer = Customer::firstOrCreate(
+                ['email' => $custData['email']],
+                [
+                'first_name' => $custData['first_name'],
+                'last_name' => $custData['last_name'],
+                'phone' => $custData['phone'],
+                'address' => $custData['address'],
+                'city' => $custData['city'],
+                'state' => $custData['state'],
+                'postcode' => $custData['postcode'],
+                'customer_code' => 'CUST-' . uniqid(), // Generate a unique customer code
+                ]
+            );
+        } else {
+            $customer = (object) [
+                'customer_code' => ''
+            ];
+        }
         
         // Check if 'cart' or 'productsInCart' exists in the request
         if (!$request->has('cart') && !$request->has('productsInCart')) {
@@ -207,12 +213,12 @@ class InvoiceController extends Controller
         });
 
         // Generate a unique invoice code based on the last number
-        $lastInvoice = Invoice::orderBy('created_at', 'desc')->first();
-        $lastNumber = $lastInvoice ? intval(substr($lastInvoice->invoice_code, -4)) : 0;
-        $newNumber = str_pad($lastNumber + 1, 4, '0', STR_PAD_LEFT);
-        $invoiceCode = 'INV-' . now()->format('Ym') . $newNumber;
+        do {
+            $randomNumber = str_pad(rand(0, 9999999999), 10, '0', STR_PAD_LEFT);
+            $invoiceCode = 'INV-' . $randomNumber;
+        } while (Invoice::where('invoice_code', $invoiceCode)->exists());
         $salesPersonId = $request->salesId ? $request->salesId : null;
-        $expireDate = now()->addMinutes(60);
+        $expireDate =  $request->expireDate ? now()->addMinutes(intval($request->expireDate)) : null;
 
         $salesData = SalesPerson::where('id', $salesPersonId)->first();
 
@@ -346,6 +352,14 @@ class InvoiceController extends Controller
         $customer = Customer::where('customer_code', $request->customer_code)->first();
 
         return view('page.linkbayar', compact('invoice', 'customer'));
+    }
+
+    public function makepaid(Invoice $invoice)
+    {
+        $invoice->status = 'paid';
+        $invoice->save();
+
+        return redirect()->back()->with('success', 'Invoice paid successfully!');
     }
     
 }

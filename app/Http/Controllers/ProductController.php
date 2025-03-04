@@ -26,14 +26,15 @@ class ProductController extends Controller
 
     public function store(Request $request)
     {
-        return $request->all();
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
+            'sku' => 'required|string|max:255|unique:products,sku', // Fixed validation rule
             'image_url' => 'nullable|url',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' => 'nullable|string',
         ]);
+
     
         $imagePath = null;
     
@@ -50,6 +51,7 @@ class ProductController extends Controller
             'name' => $request->input('name'),
             'price' => $request->input('price'),
             'image_url' => $imagePath,
+            'sku' => $request->input('sku'),
             'description' => $request->input('description'),
         ]);
     
@@ -66,7 +68,8 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required|string|max:255',
             'price' => 'required|numeric|min:0',
-            'image_url' => 'nullable|url',
+            'sku' => 'required|string|max:255|unique:products,sku,' . $product->id,
+            'image_url' => 'nullable',
             'image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'description' => 'nullable|string',
         ]);
@@ -85,6 +88,7 @@ class ProductController extends Controller
         $product->update([
             'name' => $request->input('name'),
             'price' => $request->input('price'),
+            'sku' => $request->input('sku'),
             'image_url' => $imagePath,
             'description' => $request->input('description'),
         ]);
